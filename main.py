@@ -36,6 +36,8 @@ class BookSearch:
             self._book_list.append(book)
 
     def get_book_list(self):
+        """ Prints book list. """
+
         for item in self._book_list:
             print('----------------------------')
             for key, value in item.items():

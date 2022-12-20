@@ -32,7 +32,6 @@ class BookSearch:
         self._response = ""
         self._parsed_books = []
         self._book_list = []
-        self._read_list = []
 
     def get_search_term(self):
         """ Gets search term from user. """
@@ -66,18 +65,7 @@ class BookSearch:
             book = {"author": author, "title": title, "publisher": publisher}
             self._book_list.append(book)
 
-
-    def search_books(self):
-        """ Returns a sorted list of the author, title, and publisher of five books. """
-        self.get_search_term()
-
-        if True:
-            self.fetch_books()
-            self.parse_response()
-            self.set_list()
-            self.get_book_list()
-
-    def get_book_list(self):
+    def print_book_list(self):
         """ Prints book list. """
 
         for item in self._book_list:
@@ -89,13 +77,39 @@ class BookSearch:
                     print(f'{key}: {value}')
         print('----------------------------')
 
-    def set_read_list(self, selected_book):
+    def get_book_list(self):
+        """ Returns book list. """
+        return self._book_list
+
+    def search_books(self):
+        """ Returns a sorted list of the author, title, and publisher of five books. """
+        self.get_search_term()
+
+        if True:
+            self.fetch_books()
+            self.parse_response()
+            self.set_list()
+            self.print_book_list()
+
+
+class ReadList:
+    """ Creates reading list. """
+
+    def __init__(self, book_search):
+        self._books = book_search
+        self._selected_book = ""
+        self._read_list = []
+
+    def select_book(self):
+        """ Gets book selection. """
+        self._selected_book = input("select book title to add to reading list: ").lower()
+
+    def set_read_list(self):
         """ Adds specified book to read list. """
 
-        for book in self._book_list:
-            if book["title"] == selected_book:
+        for book in self._books.get_book_list():
+            if book["title"].lower() == self._selected_book:
                 self._read_list.append(book)
-
 
     def get_read_list(self):
         """ Prints the user's read list. """
@@ -108,6 +122,38 @@ class BookSearch:
                     print(f'{key}: {value}')
         print('----------------------------')
 
+    def read_list(self):
+        self.select_book()
+        self.set_read_list()
+
+
+class Console:
+
+    def __init__(self):
+        self._search_term = ""
+        self._selected_book = ""
+        self._add_book = ""
+        self._try_another = ""
+        self._search_another = ""
+
+    def search_prompt(self):
+        self._search_term = input("Enter book to be searched: ")
+
+    def add_book_prompt(self):
+        self._add_book = input("would you like to add a book to your reading list?(y/n): ").lower()
+
+    def select_book_prompt(self):
+        self._selected_book = input("select book title to add to reading list: ")
+
+    def try_another_prompt(self):
+        self._try_another = input("would you like to try another book?(y/n): ").lower()
+
+    def print_reading_list_prompt(self):
+        self._try_another = input("would you like to print your reading list?(y/n): ").lower()
+
+    def search_another_prompt(self):
+        self._search_another = input("Would you like to search another book?(y/n): ").lower()
+
 
 def main():
     """ Defines an exception """
@@ -118,13 +164,13 @@ def main():
 
         answer = input("would you like to add a book to your reading list?(y/n): ")
         while answer.lower() == "y":
-            selected_book = input("select book title to add to reading list: ")
-            search.set_read_list(selected_book)
+            books = ReadList(search)
+            books.read_list()
             answer = input("would you like to try another book?(y/n): ")
 
         answer = input("would you like to print your reading list?(y/n): ")
         if answer.lower() == "y":
-            search.get_read_list()
+            books.get_read_list()
 
         search_update = input("Would you like to search another book?(y/n): ").lower()
         if search_update != "y":

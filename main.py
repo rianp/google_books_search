@@ -35,6 +35,7 @@ class BookSearch:
             book = {"author": author, "title": title, "publisher": publisher}
             self._book_list.append(book)
 
+    def get_book_list(self):
         for item in self._book_list:
             print('----------------------------')
             for key, value in item.items():
@@ -71,6 +72,7 @@ def main():
         book_title = input("enter book title: ")
         search = BookSearch(book_title)
         search.search_books()
+        search.get_book_list()
 
         answer = input("would you like to add a book to your reading list?(y/n): ")
         while answer.lower() == "y":

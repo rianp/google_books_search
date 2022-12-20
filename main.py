@@ -4,17 +4,32 @@ import requests
 class Validation:
     """exception for no book error"""
 
-    def __init__(self, string):
-        self._string = string
+    def __init__(self, input):
+        self._input = input
 
     def validate_string(self):
         """ Validates user's string. """
-        if self._string is None:
-            return self.invalid_string()
-        # elif self._string not in Books():
-        #     return self.invalid_choice()
+        if self._input == "":
+            self.invalid_choice()
+            return False
         else:
-            return
+            return True
+
+    def validate_bool(self):
+        """ Validates user's string. """
+        if self._input != "y" and self._input != "n":
+            self.invalid_choice()
+            return False
+        else:
+            return True
+
+    def validate_selection(self):
+        """ Validates user's string. """
+        if self._input not in range(1, 5):
+            print("book number not found.")
+            return False
+        else:
+            return True
 
     def invalid_choice(self):
         """ Prints error message for an invalid choice. """
@@ -24,6 +39,7 @@ class Validation:
         """ Prints error message for an invalid choice. """
         print("This is an invalid string. ")
 
+
 class BookSearch:
     """ Reads and makes searchable Google Book Search API. """
 
@@ -31,7 +47,7 @@ class BookSearch:
         self._search_term = term.get_term()
         self._response = ""
         self._parsed_books = []
-        self._book_list = []
+        self._book_dict = {}
 
     def fetch_books(self):
         """ Fetches books from API. """
@@ -39,23 +55,26 @@ class BookSearch:
 
     def parse_response(self):
         """ Parses the fetch response. """
-        self._parsed_books = self._response.json()
+        if self._response:
+            self._parsed_books = self._response.json()
+        else:
+            print("There were no matches. ")
 
     def set_list(self):
         """ Creates book list. """
         for book in range(5):
-            book = self.create_book(book)
-            self._book_list.append(book)
+            book_object = self.create_book(book)
+            self._book_dict[book] = book_object
 
     def create_book(self, book):
         """ Creates book object. """
 
         item = self._parsed_books["items"][book]["volumeInfo"]
 
-        if len(item['authors']) > 1:
-            author = item['authors']
-        elif 'authors' not in item:
+        if 'authors' not in item:
             author = []
+        elif len(item['authors']) > 1:
+            author = item['authors']
         else:
             author = item['authors'][0]
 
@@ -72,10 +91,12 @@ class BookSearch:
     def print_book_list(self):
         """ Prints book list. """
 
-        for item in self._book_list:
-            print('----------------------------')
+        for key in self._book_dict:
+            item = self._book_dict[key]
+            print('')
+            print(f"----------Book {key + 1}------------")
 
-            if type(item.get_author()) is list:
+            if type(self._book_dict[key].get_author()) is list:
                 stripped = str(item.get_author())[1:-1]
                 print(f"Authors: {stripped}")
             else:
@@ -84,11 +105,11 @@ class BookSearch:
             print(f"Title: {item.get_title()}")
             print(f"Publisher: {item.get_publisher()}")
 
-        print('----------------------------')
+        print('')
 
-    def get_book_list(self):
+    def get_book_dict(self):
         """ Returns book list. """
-        return self._book_list
+        return self._book_dict
 
     def search_books(self):
         """ Returns a sorted list of the author, title, and publisher of five books. """
@@ -99,7 +120,8 @@ class BookSearch:
             self.set_list()
             self.print_book_list()
 
-class Book():
+
+class Book:
     """ Creates book object. """
 
     def __init__(self, authors, title, publisher):
@@ -130,27 +152,32 @@ class ReadList:
 
     def set_read_list(self):
         """ Adds specified book to read list. """
-
-        for book in self._books.get_book_list():
-            if book.get_title().lower() == self._selected_book:
-                self._read_list.append(book)
+        key = self._selected_book - 1
+        if key in self._books.get_book_dict():
+            self._read_list.append(self._books.get_book_dict()[key])
+        else:
+            return "book not found."
 
     def get_read_list(self):
         """ Prints the user's read list. """
 
-        for item in self._read_list:
+        if self._read_list:
+            for item in self._read_list:
+                print('----------------------------')
+
+                if type(item.get_author()) is list:
+                    stripped = str(item.get_author())[1:-1]
+                    print(f"Authors: {stripped}")
+                else:
+                    print(f"Author: {item.get_author()}")
+
+                print(f"Title: {item.get_title()}")
+                print(f"Publisher: {item.get_publisher()}")
+
             print('----------------------------')
+        else:
+            print("Reading list is empty. ")
 
-            if type(item.get_author()) is list:
-                stripped = str(item.get_author())[1:-1]
-                print(f"Authors: {stripped}")
-            else:
-                print(f"Author: {item.get_author()}")
-
-            print(f"Title: {item.get_title()}")
-            print(f"Publisher: {item.get_publisher()}")
-
-        print('----------------------------')
 
     def read_list(self):
         self.set_read_list()
@@ -160,28 +187,46 @@ class Console:
 
     def __init__(self):
         self._search_term = ""
-        self._selected_book = ""
+        self._selected_book = None
         self._add_book = ""
         self._print_list = ""
         self._search_another = ""
 
+    def greeting(self):
+        print("Hello friend, this is a CLI program that searches and "
+              "saves books to a local file using the Google Books API.\n")
+
     def search_term(self):
-        self._search_term = input("Enter book to be searched: ")
+        while self._search_term == "":
+            self._search_term = str(input("Enter book to be searched: "))
+            if not Validation(self._search_term).validate_string():
+                self._search_term = ""
 
     def add_book_prompt(self):
-        self._add_book = input("would you like to add a book to your reading list?(y/n): ").lower()
+        while self._add_book == "":
+            self._add_book = str(input("Would you like to add a book to your reading list?(y/n): ")).lower()
+            if not Validation(self._add_book).validate_bool():
+                self._add_book = ""
 
     def select_book_prompt(self):
-        self._selected_book = input("select book title to add to reading list: ").lower()
+        while self._selected_book is None:
+            self._selected_book = int(input("Select book number(1-5) to add to reading list: "))
+            if not Validation(self._selected_book).validate_selection():
+                 self._selected_book = None
 
     def try_another_prompt(self):
-        self._add_book = input("would you like to try another book?(y/n): ").lower()
+        while self._add_book == "":
+            self._add_book = str(input("Would you like to try another book?(y/n): ")).lower()
+            if not Validation(self._add_book).validate_bool():
+                self._add_book = ""
 
     def reading_list_prompt(self):
-        self._print_list = input("would you like to print your reading list?(y/n): ").lower()
+        self._print_list = str(input("Would you like to print your reading list?(y/n): ")).lower()
+        if not Validation(self._print_list).validate_bool():
+            self._print_list = ""
 
     def search_another_prompt(self):
-        self._search_another = input("Would you like to search another book?(y/n): ").lower()
+        self._search_another = str(input("Would you like to search another book?(y/n): ")).lower()
 
     def get_add_book(self):
         return self._add_book
@@ -204,15 +249,17 @@ def main():
 
     while True:
         console = Console()
+        console.greeting()
         console.search_term()
 
         search = BookSearch(console)
         search.search_books()
 
+        books = ReadList(search, console)
+
         console.add_book_prompt()
         while console.get_add_book().lower() == "y":
             console.select_book_prompt()
-            books = ReadList(search, console)
             books.read_list()
             console.try_another_prompt()
 

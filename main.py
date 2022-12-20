@@ -1,8 +1,8 @@
 import json
 import requests
 
-class Error(Exception):
-    """user-defined exception for duplicate pet error"""
+class NoBookError(Exception):
+    """exception for no book error"""
     pass
 
 class BookSearch:
@@ -44,19 +44,25 @@ class BookSearch:
                     print(f'{key}: {value}')
         print('----------------------------')
 
-
-    def add_to_read_list(self, selected_book):
+    def set_read_list(self, selected_book):
         """ Adds specified book to read list. """
 
         for book in self._book_list:
             if book["title"] == selected_book:
                 self._read_list.append(book)
 
+
     def get_read_list(self):
         """ Prints the user's read list. """
         for item in self._read_list:
+            print('----------------------------')
             for key, value in item.items():
-                print(f'{key}: {value}')
+                if type(value) is list:
+                    print(f'{key}s: {value}')
+                else:
+                    print(f'{key}: {value}')
+        print('----------------------------')
+
 
 def main():
     """ Defines an exception """
@@ -64,23 +70,17 @@ def main():
     while True:
         book_title = input("enter book title: ")
         search = BookSearch(book_title)
-
-        try:
-            search.search_books()
-        except Error:
-            print('error')
+        search.search_books()
 
         answer = input("would you like to add a book to your reading list?(y/n): ")
-        if answer.lower() == "y":
+        while answer.lower() == "y":
             selected_book = input("select book title to add to reading list: ")
-            try:
-                search.add_to_read_list(selected_book)
-            except Error:
-                print("This book isn't in the list.")
+            search.set_read_list(selected_book)
+            answer = input("would you like to try another book?(y/n): ")
 
         answer = input("would you like to print your reading list?(y/n): ")
         if answer.lower() == "y":
-            print(search.get_read_list())
+            search.get_read_list()
 
         search_update = input("Would you like to search another book?(y/n): ").lower()
         if search_update != "y":
@@ -89,6 +89,34 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+
+
+   # def add_to_read_list(self, selected_book):
+   #      """ Adds specified book to read JSON file. """
+   #
+   #      # for book in self._book_list:
+   #          # if selected_book in book.values():
+   #      with open('read_list.json', 'a') as outfile:
+   #          for book in self._book_list:
+   #              if book["title"] == selected_book:
+   #                  json.dump(book, outfile)
+   #          # outfile.write('\n')
+   #              # print("true")
+   #          # else:
+   #          #     raise NoBookError
+   #
+   #  def get_read_list(self):
+   #      """ Prints the user's read list. """
+   #
+   #      with open("read_list.json", 'r') as infile:
+   #          self._read_list = json.load(infile)
+   #
+   #          print(self._read_list)
+   #
+   #      # for item in self._read_list:
+   #      #     for key, value in item.items():
+   #      #         print(f'{key}: {value}')
 
 
 

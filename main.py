@@ -35,6 +35,7 @@ class BookSearch:
         self._read_list = []
 
     def get_search_term(self):
+        """ Gets search term from user. """
         self._search_term = input("Enter book to be searched: ")
 
     def fetch_books(self):
@@ -42,31 +43,39 @@ class BookSearch:
         self._response = requests.get("https://www.googleapis.com/books/v1/volumes?q=" + self._search_term)
 
     def parse_response(self):
+        """ Parses the fetch response. """
         self._parsed_books = self._response.json()
 
-    def set_list(self, book):
-        item = self._parsed_books["items"][book]["volumeInfo"]
+    def set_list(self):
+        """ Creates book list. """
+        for book in range(5):
+            item = self._parsed_books["items"][book]["volumeInfo"]
 
-        if len(item['authors']) > 1:
-            author = item['authors']
-        else:
-            author = item['authors'][0]
+            if len(item['authors']) > 1:
+                author = item['authors']
+            else:
+                author = item['authors'][0]
 
-        title = item['title']
+            title = item['title']
 
-        if 'publisher' not in item:
-            publisher = ''
-        else:
-            publisher = item['publisher']
+            if 'publisher' not in item:
+                publisher = ''
+            else:
+                publisher = item['publisher']
 
-        book = {"author": author, "title": title, "publisher": publisher}
-        self._book_list.append(book)
+            book = {"author": author, "title": title, "publisher": publisher}
+            self._book_list.append(book)
 
 
     def search_books(self):
         """ Returns a sorted list of the author, title, and publisher of five books. """
-        for book in range(5):
-            self.set_list(book)
+        self.get_search_term()
+
+        if True:
+            self.fetch_books()
+            self.parse_response()
+            self.set_list()
+            self.get_book_list()
 
     def get_book_list(self):
         """ Prints book list. """
@@ -105,11 +114,7 @@ def main():
 
     while True:
         search = BookSearch()
-        search.get_search_term()
-        search.fetch_books()
-        search.parse_response()
         search.search_books()
-        search.get_book_list()
 
         answer = input("would you like to add a book to your reading list?(y/n): ")
         while answer.lower() == "y":

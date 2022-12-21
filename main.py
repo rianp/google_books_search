@@ -20,9 +20,9 @@ class Validation:
         else:
             return True
 
-    def validate_selection(self):
+    def validate_selection(self, selection):
         """ Validates user's string. """
-        if self._input not in range(1, 5):
+        if selection not in range(1, 5):
             print("book number not found.")
             return False
         else:
@@ -31,11 +31,6 @@ class Validation:
     def invalid_choice(self):
         """ Prints error message for an invalid choice. """
         print("This is an invalid choice. ")
-
-    def invalid_string(self):
-        """ Prints error message for an invalid choice. """
-        print("This is an invalid string. ")
-
 
 class BookSearch:
     """ Reads and makes searchable Google Book Search API. """
@@ -155,7 +150,10 @@ class ReadList:
         self._read_list = []
 
     def select_book(self):
-        self._selected_book = int(input("Select book number(1-5) to add to reading list: "))
+        while self._selected_book is None:
+            self._selected_book = int(input("Select book number(1-5) to add to reading list: "))
+            if not Validation().validate_selection(self._selected_book):
+                self._selected_book = None
 
     def set_read_list(self):
         """ Adds specified book to read list. """
@@ -219,11 +217,11 @@ class Console:
         print("Hello friend, this is a CLI program that searches and "
               "saves books to a local file using the Google Books API.\n")
 
-    def search_term(self):
-        while self._search_term == "":
-            self._search_term = str(input("Enter book to be searched: "))
-            if not Validation(self._search_term).validate_string():
-                self._search_term = ""
+    # def search_term(self):
+    #     while self._search_term == "":
+    #         self._search_term = str(input("Enter book to be searched: "))
+    #         if not Validation(self._search_term).validate_string():
+    #             self._search_term = ""
 
     def add_book_prompt(self):
         while self._add_book == "":
@@ -266,17 +264,36 @@ def main():
         search.search_books()
         books = ReadList(search)
 
-        answer = input("Would you like to add a book to your reading list?(y/n): ").lower()
+        answer = ""
+        while answer == "":
+            answer = input("Would you like to add a book to your reading list?(y/n): ").lower()
+            if not Validation().validate_bool(answer):
+                answer = ""
+
         while answer == "y":
             books.read_list()
-            answer = input("Would you like to try another book?(y/n): ")
+            answer = ""
+            while answer == "":
+                answer = input("Would you like to try another book?(y/n): ")
+                if not Validation().validate_bool(answer):
+                    answer = ""
 
-        answer = input("Would you like to print your reading list?(y/n): ").lower()
+        answer = ""
+        while answer == "":
+            answer = input("Would you like to print your reading list?(y/n): ").lower()
+            if not Validation().validate_bool(answer):
+                answer = ""
+
         if answer == "y":
             books.get_read_list()
 
-        search_update = input("Would you like to search another book?(y/n): ").lower()
-        if search_update != "y":
+        search_update = ""
+        while search_update == "":
+            search_update = input("Would you like to search another book?(y/n): ").lower()
+            if not Validation().validate_bool(answer):
+                search_update = ""
+
+        if search_update == "n":
             print("Okay. Goodbye!")
             break
 

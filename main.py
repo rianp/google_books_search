@@ -8,7 +8,7 @@ class Validation:
     def validate_string(self, string):
         """ Validates user's string. """
         if string == "":
-            self.invalid_choice()
+            print("This is an invalid choice. ")
             return False
         else:
             return True
@@ -16,7 +16,7 @@ class Validation:
     def validate_bool(self, input):
         """ Validates y/n selection """
         if input != "y" and input != "n":
-            self.invalid_choice()
+            print("This is an invalid choice. ")
             return False
         else:
             return True
@@ -28,10 +28,6 @@ class Validation:
             return False
         else:
             return True
-
-    def invalid_choice(self):
-        """ Prints error message for an invalid choice. """
-        print("This is an invalid choice. ")
 
 
 class BookSearch:
@@ -242,7 +238,8 @@ def main():
     except:
         File().create_file()
 
-    print("Hello friend! This is a search and save programming for books using Google Book Search API. Enjoy!")
+    print("Hello friend! This is a program that searches books using Google's Book Search API.\n"
+          "It will then return a list of matches you can select from to save to a reading list file. Enjoy!")
 
     while True:
         search = BookSearch()

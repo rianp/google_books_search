@@ -43,4 +43,6 @@ The output of the tests will be displayed in the terminal or command prompt wind
 
 **You can search for books by terms matching the book's author, title, publisher, or subject.**
 
+## Author
+
 **This program was written by Rian Pickell. You can find me at: [LinkedIn](https://www.linkedin.com/in/rianpickell/)**

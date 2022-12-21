@@ -4,9 +4,6 @@ import requests
 class Validation:
     """exception for no book error"""
 
-    def __init__(self, input):
-        self._input = input
-
     def validate_string(self):
         """ Validates user's string. """
         if self._input == "":
@@ -15,9 +12,9 @@ class Validation:
         else:
             return True
 
-    def validate_bool(self):
+    def validate_bool(self, input):
         """ Validates user's string. """
-        if self._input != "y" and self._input != "n":
+        if input != "y" and input != "n":
             self.invalid_choice()
             return False
         else:
@@ -256,20 +253,23 @@ class Console:
 
 def main():
     """ Defines an exception """
-    File().create_file()
+    try:
+        File().read_file()
+    except:
+        File().create_file()
 
     while True:
         search = BookSearch()
         search.search_books()
         books = ReadList(search)
 
-        answer = input("would you like to add a book to your reading list?(y/n): ")
-        while answer.lower() == "y":
+        answer = input("would you like to add a book to your reading list?(y/n): ").lower()
+        while answer == "y":
             books.read_list()
             answer = input("would you like to try another book?(y/n): ")
 
-        answer = input("would you like to print your reading list?(y/n): ")
-        if answer.lower() == "y":
+        answer = input("would you like to print your reading list?(y/n): ").lower()
+        if answer == "y":
             books.get_read_list()
 
         search_update = input("Would you like to search another book?(y/n): ").lower()

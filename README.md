@@ -16,7 +16,6 @@ command in your terminal:**
 by running the following command:**
 
 ```pip install requests```
-
 **and**
 ```pip install JSON```
 

@@ -43,11 +43,14 @@ class Validation:
 class BookSearch:
     """ Reads and makes searchable Google Book Search API. """
 
-    def __init__(self, term):
-        self._search_term = term.get_term()
+    def __init__(self):
+        self._search_term = ""
         self._response = ""
         self._parsed_books = []
         self._book_dict = {}
+
+    def set_search_term(self):
+        self._search_term = str(input("Enter book to be searched: "))
 
     def fetch_books(self):
         """ Fetches books from API. """
@@ -115,6 +118,7 @@ class BookSearch:
         """ Returns a sorted list of the author, title, and publisher of five books. """
 
         if True:
+            self.set_search_term()
             self.fetch_books()
             self.parse_response()
             self.set_list()
@@ -145,22 +149,27 @@ class Book:
 class ReadList:
     """ Creates reading list. """
 
-    def __init__(self, book_search, console):
+    def __init__(self, book_search):
         self._books = book_search
-        self._selected_book = console.get_selected_book()
+        self._selected_book = None
         self._read_list = []
+
+    def select_book(self):
+        self._selected_book = int(input("Select book number(1-5) to add to reading list: "))
 
     def set_read_list(self):
         """ Adds specified book to read list. """
         key = self._selected_book - 1
         if key in self._books.get_book_dict():
-            self._read_list.append(self._books.get_book_dict()[key])
+            book = self._books.get_book_dict()[key]
+            self._read_list.append(book)
+            File().write_file(book)
         else:
             return "book not found."
 
     def get_read_list(self):
         """ Prints the user's read list. """
-
+        print(self._read_list)
         if self._read_list:
             for item in self._read_list:
                 print('----------------------------')
@@ -178,19 +187,37 @@ class ReadList:
         else:
             print("Reading list is empty. ")
 
-
     def read_list(self):
+        self.select_book()
         self.set_read_list()
 
 
-class Console:
+class File:
+    """ Creates and adds to JSON file. """
 
-    def __init__(self):
-        self._search_term = ""
-        self._selected_book = None
-        self._add_book = ""
-        self._print_list = ""
-        self._search_another = ""
+
+    def create_file(self):
+        books_dict = {}
+        books_dict["books"] = []
+        json_object = json.dumps(books_dict)
+        with open('read_list.json', 'a') as outfile:
+            outfile.write(json_object)
+            outfile.write('\n')
+
+    def write_file(self, book):
+        file_data = self.read_file()
+        file_data["books"].append(book.__dict__)
+        print(file_data)
+        with open('read_list.json', 'w') as outfile:
+            outfile.dump(file_data, outfile)
+
+    def read_file(self):
+        with open('read_list.json', 'r') as openfile:
+            json_object = json.load(openfile)
+        return json_object
+
+
+class Console:
 
     def greeting(self):
         print("Hello friend, this is a CLI program that searches and "
@@ -227,81 +254,38 @@ class Console:
 
     def search_another_prompt(self):
         self._search_another = str(input("Would you like to search another book?(y/n): ")).lower()
-
-    def get_add_book(self):
-        return self._add_book
-
-    def get_list(self):
-        return self._print_list
-
-    def get_search_another(self):
-        return self._search_another
-
-    def get_term(self):
-        return self._search_term
-
-    def get_selected_book(self):
-        return self._selected_book
+        if not Validation(self._print_list).validate_bool():
+            self._search_another = ""
 
 
 def main():
     """ Defines an exception """
 
     while True:
-        console = Console()
-        console.greeting()
-        console.search_term()
-
-        search = BookSearch(console)
+        search = BookSearch()
         search.search_books()
+        books = ReadList(search)
+        File().create_file()
 
-        books = ReadList(search, console)
-
-        console.add_book_prompt()
-        while console.get_add_book().lower() == "y":
-            console.select_book_prompt()
+        answer = input("would you like to add a book to your reading list?(y/n): ")
+        while answer.lower() == "y":
             books.read_list()
-            console.try_another_prompt()
+            answer = input("would you like to try another book?(y/n): ")
 
-        console.reading_list_prompt()
-        if console.get_list() == "y":
+        answer = input("would you like to print your reading list?(y/n): ")
+        if answer.lower() == "y":
             books.get_read_list()
 
-        console.search_another_prompt()
-        if console.get_search_another() != "y":
+        search_update = input("Would you like to search another book?(y/n): ").lower()
+        if search_update != "y":
             print("Okay. Goodbye!")
             break
+
 
 if __name__ == "__main__":
     main()
 
 
-
-   # def add_to_read_list(self, selected_book):
-   #      """ Adds specified book to read JSON file. """
-   #
-   #      # for book in self._book_list:
-   #          # if selected_book in book.values():
-   #      with open('read_list.json', 'a') as outfile:
-   #          for book in self._book_list:
-   #              if book["title"] == selected_book:
-   #                  json.dump(book, outfile)
-   #          # outfile.write('\n')
-   #              # print("true")
-   #          # else:
-   #          #     raise NoBookError
-   #
-   #  def get_read_list(self):
-   #      """ Prints the user's read list. """
-   #
-   #      with open("read_list.json", 'r') as infile:
-   #          self._read_list = json.load(infile)
-   #
-   #          print(self._read_list)
-   #
-   #      # for item in self._read_list:
-   #      #     for key, value in item.items():
-   #      #         print(f'{key}: {value}')
 
 
 

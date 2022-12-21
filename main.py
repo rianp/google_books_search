@@ -253,10 +253,6 @@ def main():
         if answer == "y":
             books.print_read_list()
 
-        answer = Console().prompt("Would you like read file?(y/n): ")
-        if answer == "y":
-            print(File().read_file())
-
         answer = Console().prompt("Would you like to search for another book?(y/n): ")
         if answer == "n":
             print("Okay. Goodbye!")

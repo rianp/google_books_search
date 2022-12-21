@@ -263,12 +263,12 @@ def main():
         search.search_books()
         books = ReadList(search)
 
-        answer = input("would you like to add a book to your reading list?(y/n): ").lower()
+        answer = input("Would you like to add a book to your reading list?(y/n): ").lower()
         while answer == "y":
             books.read_list()
-            answer = input("would you like to try another book?(y/n): ")
+            answer = input("Would you like to try another book?(y/n): ")
 
-        answer = input("would you like to print your reading list?(y/n): ").lower()
+        answer = input("Would you like to print your reading list?(y/n): ").lower()
         if answer == "y":
             books.get_read_list()
 

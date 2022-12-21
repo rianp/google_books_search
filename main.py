@@ -3,7 +3,7 @@ import requests
 
 
 class Validation:
-    """exception for no book error"""
+    """ Validates user inputs. """
 
     def validate_string(self, string):
         """ Validates user's string. """
@@ -14,7 +14,7 @@ class Validation:
             return True
 
     def validate_bool(self, input):
-        """ Validates user's string. """
+        """ Validates y/n selection """
         if input != "y" and input != "n":
             self.invalid_choice()
             return False
@@ -22,9 +22,9 @@ class Validation:
             return True
 
     def validate_selection(self, selection):
-        """ Validates user's string. """
+        """ Validates user's book selection. """
         if selection not in range(1, 5):
-            print("book number not found.")
+            print("Book number not found.")
             return False
         else:
             return True
@@ -35,7 +35,7 @@ class Validation:
 
 
 class BookSearch:
-    """ Reads and makes searchable Google Book Search API. """
+    """ Retrieves search results from Google Books API """
 
     def __init__(self):
         self._search_term = ""
@@ -46,7 +46,7 @@ class BookSearch:
     def set_search_term(self):
         """ Gets the search term from the user. """
         while self._search_term == "":
-            self._search_term = str(input("Enter book to be searched: "))
+            self._search_term = input("Enter book to be searched: ")
             if not Validation().validate_string(self._search_term):
                 self._search_term = ""
 
@@ -56,10 +56,10 @@ class BookSearch:
 
     def parse_response(self):
         """ Parses the fetch response. """
-        if self._response:
-            self._parsed_books = self._response.json()
+        if self._response == "":
+            return "There were no matches. "
         else:
-            print("There were no matches. ")
+            self._parsed_books = self._response.json()
 
     def set_list(self):
         """ Creates book list. """
@@ -113,7 +113,7 @@ class BookSearch:
         return self._book_dict
 
     def search_books(self):
-        """ Returns a sorted list of the author, title, and publisher of five books. """
+        """ Returns a list of the author, title, and publisher of five books. """
 
         if True:
             self.set_search_term()
@@ -160,16 +160,16 @@ class ReadList:
                 self._selected_book = None
 
     def set_read_list(self):
-        """ Adds specified book to read list. """
+        """ Adds specified book to reading list. """
         key = self._selected_book - 1
         if key in self._books.get_book_dict():
             book = self._books.get_book_dict()[key]
             self._read_list.append(book)
         else:
-            return "book not found."
+            return "Book not found."
 
-    def get_read_list(self):
-        """ Prints the user's read list. """
+    def print_read_list(self):
+        """ Prints the user's reading list. """
         if self._read_list:
             for item in self._read_list:
                 print('----------------------------')
@@ -191,7 +191,8 @@ class ReadList:
         """ Returns reading list. """
         return self._read_list
 
-    def read_list(self):
+    def add_to_list(self):
+        """ Creates a reading list. """
         self.select_book()
         self.set_read_list()
 
@@ -200,7 +201,7 @@ class File:
     """ Creates and adds to JSON file. """
 
     def create_file(self):
-        """ Creates read list file. """
+        """ Creates a reading list file. """
         books_dict = {}
         books_dict["books"] = []
         json_object = json.dumps(books_dict)
@@ -208,7 +209,7 @@ class File:
             outfile.write(json_object)
 
     def write_file(self, books):
-        """ Writes to read list file. """
+        """ Writes to a reading list file. """
         file_data = self.read_file()
         for book in books:
             file_data["books"].append(book.__dict__)
@@ -216,7 +217,7 @@ class File:
             json.dump(file_data, outfile)
 
     def read_file(self):
-        """ Reads read list file. """
+        """ Reads a reading list file. """
         with open('read_list.json', 'r') as openfile:
             json_object = json.load(openfile)
         return json_object
@@ -251,12 +252,12 @@ def main():
         answer = Console().prompt("Would you like to add a book to your reading list?(y/n): ")
 
         while answer == "y":
-            books.read_list()
-            answer = Console().prompt("Would you like to add another book?(y/n): ")
+            books.add_to_list()
+            answer = Console().prompt("Would you like to add another book to your reading list?(y/n): ")
 
         answer = Console().prompt("Would you like to print your reading list?(y/n): ")
         if answer == "y":
-            books.get_read_list()
+            books.print_read_list()
 
         answer = Console().prompt("Would you like to save list to file?(y/n): ")
         if answer == "y":
@@ -266,7 +267,7 @@ def main():
         if answer == "y":
             print(File().read_file())
 
-        answer = Console().prompt("Would you like to search another book?(y/n): ")
+        answer = Console().prompt("Would you like to search for another book?(y/n): ")
         if answer == "n":
             print("Okay. Goodbye!")
             break

@@ -61,7 +61,7 @@ class BookSearch:
                 self.set_list(parsed_books)
                 self.print_book_list()
             else:
-                retry = Console().prompt("Do you want to search again?(y/n): ")
+                retry = Console().prompt("Would you like to search again?(y/n): ")
                 if retry == "y":
                     self.get_search_term()
                 else:
@@ -223,13 +223,11 @@ class Console:
     """ Prompts user and returns answer. """
 
     def prompt(self, string):
-        answer = ""
-        while answer == "":
-            answer = input(string).lower()
-            if not Validation().validate_bool(answer):
-                answer = ""
-        return answer
+        answer = input(string).lower()
+        if not Validation().validate_bool(answer):
+            Console().prompt(string)
 
+        return answer
 
 def main():
     """ Defines an exception """

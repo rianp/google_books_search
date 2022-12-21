@@ -178,8 +178,8 @@ class ReadList:
                 else:
                     print(f"Author: {book['_author']}")
 
-                    print(f"Title: {book['_title']}")
-                    print(f"Publisher: {book['_publisher']}")
+                print(f"Title: {book['_title']}")
+                print(f"Publisher: {book['_publisher']}")
             print('----------------------------')
         else:
             print("Reading list is empty. ")

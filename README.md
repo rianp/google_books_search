@@ -30,6 +30,17 @@ by running the following command:**
 
 ```python3 main.py```
 
+**This will run the main.py file using the Python interpreter. 
+The output of the program will be displayed in the terminal or command prompt window.**
+
+**You can run the test.py file by using the following command in your terminal or command prompt:**
+```python3 test.py```
+
+**This will run the test.py file using the Python interpreter. 
+The output of the tests will be displayed in the terminal or command prompt window.**
+
 ## Options
 
 **You can search for books by terms matching the book's author, title, publisher, or subject.**
+
+***This program was written by Rian Pickell. You can find me at: [LinkedIn](https://www.linkedin.com/in/rianpickell/)***

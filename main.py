@@ -75,7 +75,6 @@ class BookSearch:
 
     def create_book_object(self, book, parsed_books):
         """ Creates book object. """
-
         item = parsed_books["items"][book]["volumeInfo"]
 
         if "authors" not in item:

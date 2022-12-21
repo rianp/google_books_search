@@ -29,44 +29,54 @@ class Validation:
         else:
             return True
 
+    def validate_response(self, json_response):
+        if not json_response['totalItems']:
+            print("There were no matches. ")
+            return False
+        else:
+            return True
+
 
 class BookSearch:
-    """ Retrieves search results from Google Books API """
+    """ Reads and makes searchable Google Book Search API. """
 
     def __init__(self):
-        self._search_term = ""
-        self._response = ""
-        self._parsed_books = []
         self._book_dict = {}
 
-    def set_search_term(self):
+    def get_search_term(self):
         """ Gets the search term from the user. """
-        while self._search_term == "":
-            self._search_term = input("Enter book to be searched: ")
-            if not Validation().validate_string(self._search_term):
-                self._search_term = ""
-
-    def fetch_books(self):
-        """ Fetches books from API. """
-        self._response = requests.get("https://www.googleapis.com/books/v1/volumes?q=" + self._search_term)
-
-    def parse_response(self):
-        """ Parses the fetch response. """
-        if self._response == "":
-            return "There were no matches. "
+        search_term = input("Enter book to be searched: ")
+        if Validation().validate_string(search_term):
+            self.fetch_books(search_term)
         else:
-            self._parsed_books = self._response.json()
+            self.get_search_term()
 
-    def set_list(self):
+    def fetch_books(self, search_term):
+        """ Fetches books from API. """
+        response = requests.get("https://www.googleapis.com/books/v1/volumes?q=" + search_term)
+
+        if response:
+            parsed_books = response.json()
+            if Validation().validate_response(parsed_books):
+                self.set_list(parsed_books)
+                self.print_book_list()
+            else:
+                retry = Console().prompt("Do you want to search again?(y/n): ")
+                if retry == "y":
+                    self.get_search_term()
+                else:
+                    print("Okay! Thank you so much and goodbye!")
+
+    def set_list(self, parsed_books):
         """ Creates book list. """
         for book in range(5):
-            book_object = self.create_book(book)
+            book_object = self.create_book(book, parsed_books)
             self._book_dict[book] = book_object
 
-    def create_book(self, book):
+    def create_book(self, book, parsed_books):
         """ Creates book object. """
 
-        item = self._parsed_books["items"][book]["volumeInfo"]
+        item = parsed_books["items"][book]["volumeInfo"]
 
         if 'authors' not in item:
             author = []
@@ -104,20 +114,10 @@ class BookSearch:
 
         print('')
 
+
     def get_book_dict(self):
         """ Returns book list. """
         return self._book_dict
-
-    def search_books(self):
-        """ Returns a list of the author, title, and publisher of five books. """
-
-        if True:
-            self.set_search_term()
-            self.fetch_books()
-            self.parse_response()
-            self.set_list()
-            self.print_book_list()
-
 
 class Book:
     """ Creates book object. """
@@ -168,8 +168,8 @@ class ReadList:
 
     def print_read_list(self):
         """ Prints the user's reading list. """
-        try:
-            books = File().read_file()
+        books = File().read_file()
+        if books["books"]:
             for book in books["books"]:
                 print('----------------------------')
                 if type(book["_author"]) is list:
@@ -181,7 +181,7 @@ class ReadList:
                     print(f"Title: {book['_title']}")
                     print(f"Publisher: {book['_publisher']}")
             print('----------------------------')
-        except:
+        else:
             print("Reading list is empty. ")
 
     def get_list(self):
@@ -243,7 +243,7 @@ def main():
 
     while True:
         search = BookSearch()
-        search.search_books()
+        search.get_search_term()
         books = ReadList(search)
 
         answer = Console().prompt("Would you like to add a book to your reading list?(y/n): ")

@@ -169,7 +169,6 @@ class ReadList:
 
     def get_read_list(self):
         """ Prints the user's read list. """
-        print(self._read_list)
         if self._read_list:
             for item in self._read_list:
                 print('----------------------------')
@@ -195,21 +194,18 @@ class ReadList:
 class File:
     """ Creates and adds to JSON file. """
 
-
     def create_file(self):
         books_dict = {}
         books_dict["books"] = []
         json_object = json.dumps(books_dict)
-        with open('read_list.json', 'a') as outfile:
+        with open('read_list.json', 'w') as outfile:
             outfile.write(json_object)
-            outfile.write('\n')
 
     def write_file(self, book):
         file_data = self.read_file()
         file_data["books"].append(book.__dict__)
-        print(file_data)
         with open('read_list.json', 'w') as outfile:
-            outfile.dump(file_data, outfile)
+            json.dump(file_data, outfile)
 
     def read_file(self):
         with open('read_list.json', 'r') as openfile:
@@ -260,12 +256,12 @@ class Console:
 
 def main():
     """ Defines an exception """
+    File().create_file()
 
     while True:
         search = BookSearch()
         search.search_books()
         books = ReadList(search)
-        File().create_file()
 
         answer = input("would you like to add a book to your reading list?(y/n): ")
         while answer.lower() == "y":

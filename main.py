@@ -23,7 +23,7 @@ class Validation:
 
     def validate_selection(self, selection):
         """ Validates user's book selection. """
-        if selection not in range(1, 5):
+        if selection not in range(1, 6):
             print("Book number not found.")
             return False
         else:

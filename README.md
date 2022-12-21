@@ -5,30 +5,25 @@
 ## Installation
 
 **To use the Google Books Search CLI, you will need to have Python 3 installed 
-on your machine. You can check if you have Python installed by running the following 
-command in your terminal:**
+on your machine. You can check if you have Python 3 installed by running the following command in your terminal:**
 
 ```python --version```
 
-**If you do not have Python installed, you can download it from the Python website.**
+**If you do not have the correct Python version installed, you can download it from the Python website.**
 
-**Once you have Python installed, you can install the required libraries "requests" and "JSON" 
+**Once you have Python 3 installed, you can install the required libraries "requests" and "JSON" 
 by running the following command:**
 
-```pip install requests```
+```pip3 install requests```
 **and**
-```pip install JSON```
+```pip3 install JSON```
 
 ## Usage
 
 **To search for books using the Google Books Search CLI, simply run the following command in your terminal:**
 
-```python main.py```
+```python3 main.py```
 
 ## Options
 
-**There are several options you can search by:**
-
-**--author: returns 5 books matching that author.**
-**--publisher: returns 5 books matching that title.**
-**--publisher: returns 5 books matching that publisher.**
+**You can search for books by terms matching the book's author, title, publisher, or subject.**

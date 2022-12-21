@@ -1,6 +1,7 @@
 import json
 import requests
 
+
 class Validation:
     """exception for no book error"""
 
@@ -222,6 +223,7 @@ class File:
 
 
 class Console:
+    """ Prompts user and returns answer. """
 
     def prompt(self, string):
         answer = ""
@@ -232,14 +234,14 @@ class Console:
         return answer
 
 
-
-
 def main():
     """ Defines an exception """
     try:
         File().read_file()
     except:
         File().create_file()
+
+    print("Hello friend! This is a search and save programming for books using Google Book Search API. Enjoy!")
 
     while True:
         search = BookSearch()

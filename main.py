@@ -32,6 +32,7 @@ class Validation:
         """ Prints error message for an invalid choice. """
         print("This is an invalid choice. ")
 
+
 class BookSearch:
     """ Reads and makes searchable Google Book Search API. """
 
@@ -161,7 +162,6 @@ class ReadList:
         if key in self._books.get_book_dict():
             book = self._books.get_book_dict()[key]
             self._read_list.append(book)
-            File().write_file(book)
         else:
             return "book not found."
 
@@ -184,6 +184,9 @@ class ReadList:
         else:
             print("Reading list is empty. ")
 
+    def get_list(self):
+        return self._read_list
+
     def read_list(self):
         self.select_book()
         self.set_read_list()
@@ -193,19 +196,23 @@ class File:
     """ Creates and adds to JSON file. """
 
     def create_file(self):
+        """ Creates read list file. """
         books_dict = {}
         books_dict["books"] = []
         json_object = json.dumps(books_dict)
         with open('read_list.json', 'w') as outfile:
             outfile.write(json_object)
 
-    def write_file(self, book):
+    def write_file(self, books):
+        """ Writes to read list file. """
         file_data = self.read_file()
-        file_data["books"].append(book.__dict__)
+        for book in books:
+            file_data["books"].append(book.__dict__)
         with open('read_list.json', 'w') as outfile:
             json.dump(file_data, outfile)
 
     def read_file(self):
+        """ Reads read list file. """
         with open('read_list.json', 'r') as openfile:
             json_object = json.load(openfile)
         return json_object
@@ -274,7 +281,7 @@ def main():
             books.read_list()
             answer = ""
             while answer == "":
-                answer = input("Would you like to try another book?(y/n): ")
+                answer = input("Would you like to add another book?(y/n): ")
                 if not Validation().validate_bool(answer):
                     answer = ""
 
@@ -286,6 +293,23 @@ def main():
 
         if answer == "y":
             books.get_read_list()
+
+
+        answer = ""
+        while answer == "":
+            answer = input("Would you like to save list to file?(y/n): ")
+            if not Validation().validate_bool(answer):
+                answer = ""
+        if answer == "y":
+            File().write_file(books.get_list())
+
+        answer = ""
+        while answer == "":
+            answer = input("Would you like read file?(y/n): ")
+            if not Validation().validate_bool(answer):
+                answer = ""
+        if answer == "y":
+            print(File().read_file())
 
         search_update = ""
         while search_update == "":

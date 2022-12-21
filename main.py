@@ -104,7 +104,7 @@ class BookSearch:
             print(f"----------Book {key + 1}------------")
 
             if type(self._book_dict[key].get_author()) is list:
-                stripped = str(item.get_author())[1:-1]
+                stripped = ', '.join(item.get_author())
                 print(f"Authors: {stripped}")
             else:
                 print(f"Author: {item.get_author()}")
@@ -173,7 +173,7 @@ class ReadList:
             for book in books["books"]:
                 print('----------------------------')
                 if type(book["_author"]) is list:
-                    stripped = str(book["_author"])[1:-1]
+                    stripped = ', '.join(book["_author"])
                     print(f"Authors: {stripped}")
                 else:
                     print(f"Author: {book['_author']}")

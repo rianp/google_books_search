@@ -4,9 +4,9 @@ import requests
 class Validation:
     """exception for no book error"""
 
-    def validate_string(self):
+    def validate_string(self, string):
         """ Validates user's string. """
-        if self._input == "":
+        if string == "":
             self.invalid_choice()
             return False
         else:
@@ -47,7 +47,10 @@ class BookSearch:
         self._book_dict = {}
 
     def set_search_term(self):
-        self._search_term = str(input("Enter book to be searched: "))
+        while self._search_term == "":
+            self._search_term = str(input("Enter book to be searched: "))
+            if not Validation().validate_string(self._search_term):
+                self._search_term = ""
 
     def fetch_books(self):
         """ Fetches books from API. """

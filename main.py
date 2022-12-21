@@ -10,31 +10,27 @@ class Validation:
         if string == "":
             print("This is an invalid choice. ")
             return False
-        else:
-            return True
+        return True
 
-    def validate_bool(self, input):
-        """ Validates y/n selection """
-        if input != "y" and input != "n":
+    def validate_bool(self, choice):
+        """ Validates y/n selection. """
+        if choice not in ("y", "n"):
             print("This is an invalid choice. ")
             return False
-        else:
-            return True
+        return True
 
     def validate_selection(self, selection):
         """ Validates user's book selection. """
         if selection not in range(1, 6):
             print("Book number not found.")
             return False
-        else:
-            return True
+        return True
 
     def validate_response(self, json_response):
-        if not json_response['totalItems']:
-            print("There were no matches. ")
+        """ Validate response returns list of books. """
+        if not json_response["totalItems"]:
             return False
-        else:
-            return True
+        return True
 
 
 class BookSearch:
@@ -45,11 +41,8 @@ class BookSearch:
 
     def get_search_term(self):
         """ Gets the search term from the user. """
-        search_term = input("Enter book to be searched: ")
-        if Validation().validate_string(search_term):
-            self.fetch_books(search_term)
-        else:
-            self.get_search_term()
+        search_term = Console().prompt_input("Enter book to be searched: ")
+        self.fetch_books(search_term)
 
     def fetch_books(self, search_term):
         """ Fetches books from API. """
@@ -61,11 +54,18 @@ class BookSearch:
                 self.set_list(parsed_books)
                 self.print_book_list()
             else:
-                retry = Console().prompt("Would you like to search again?(y/n): ")
-                if retry == "y":
-                    self.get_search_term()
-                else:
-                    print("Okay! Thank you so much and goodbye!")
+                self.search_failed()
+        else:
+            self.search_failed()
+
+    def search_failed(self):
+        """ Handles searches that fail to return results. """
+        print("There were no matches. ")
+        retry = Console().prompt_yn("Would you like to search again?(y/n): ")
+        if retry == "y":
+            self.get_search_term()
+        else:
+            print("Okay! Thank you so much and goodbye!")
 
     def set_list(self, parsed_books):
         """ Creates book list. """
@@ -78,46 +78,43 @@ class BookSearch:
 
         item = parsed_books["items"][book]["volumeInfo"]
 
-        if 'authors' not in item:
+        if "authors" not in item:
             author = []
-        elif len(item['authors']) > 1:
-            author = item['authors']
+        elif len(item["authors"]) > 1:
+            author = item["authors"]
         else:
-            author = item['authors'][0]
+            author = item["authors"][0]
 
-        title = item['title']
+        title = item["title"]
 
-        if 'publisher' not in item:
-            publisher = ''
+        if "publisher" not in item:
+            publisher = ""
         else:
-            publisher = item['publisher']
+            publisher = item["publisher"]
 
-        book = Book(author, title, publisher)
-        return book
+        return Book(author, title, publisher)
 
     def print_book_list(self):
         """ Prints book list. """
+        for index, book in self._book_dict.items():
+            print("")
+            print(f"----------Book {index + 1}------------")
 
-        for key in self._book_dict:
-            item = self._book_dict[key]
-            print('')
-            print(f"----------Book {key + 1}------------")
-
-            if type(self._book_dict[key].get_author()) is list:
-                stripped = ', '.join(item.get_author())
+            if isinstance(book.get_author(), list):
+                stripped = ", ".join(book.get_author())
                 print(f"Authors: {stripped}")
             else:
-                print(f"Author: {item.get_author()}")
+                print(f"Author: {book.get_author()}")
 
-            print(f"Title: {item.get_title()}")
-            print(f"Publisher: {item.get_publisher()}")
+            print(f"Title: {book.get_title()}")
+            print(f"Publisher: {book.get_publisher()}")
 
-        print('')
-
+        print("")
 
     def get_book_dict(self):
         """ Returns book list. """
         return self._book_dict
+
 
 class Book:
     """ Creates book object. """
@@ -152,7 +149,8 @@ class ReadList:
         """ Gets book selection from user. """
         self._selected_book = None
         while self._selected_book is None:
-            self._selected_book = int(input("Select book number(1-5) to add to reading list: "))
+            self._selected_book = Console().prompt_selection(
+                "Select book number(1-5) to add to reading list: ")
             if not Validation().validate_selection(self._selected_book):
                 self._selected_book = None
 
@@ -164,7 +162,7 @@ class ReadList:
             File().write_file(book)
             self._read_list.append(book)
         else:
-            return "Book not found."
+            print("Book not found.")
 
     def print_read_list(self):
         """ Prints the user's reading list. """
@@ -172,7 +170,7 @@ class ReadList:
         if books["books"]:
             for book in books["books"]:
                 print('----------------------------')
-                if type(book["_author"]) is list:
+                if isinstance(book["_author"], list):
                     stripped = ', '.join(book["_author"])
                     print(f"Authors: {stripped}")
                 else:
@@ -220,14 +218,29 @@ class File:
 
 
 class Console:
-    """ Prompts user and returns answer. """
+    """ Displays prompts and receives user input. """
 
-    def prompt(self, string):
+    def prompt_yn(self, string):
+        """ Prompts user for a yes/no answer. """
         answer = input(string).lower()
         if not Validation().validate_bool(answer):
-            Console().prompt(string)
-
+            Console().prompt_yn(string)
         return answer
+
+    def prompt_input(self, string):
+        """ Prompts user for a string input. """
+        answer = input(string).lower()
+        if not Validation().validate_string(answer):
+            Console().prompt_input(string)
+        return answer
+
+    def prompt_selection(self, string):
+        """ Prompts user for a selection between 1-5. """
+        answer = int(input(string))
+        if not Validation().validate_selection(answer):
+            Console().prompt_selection(string)
+        return answer
+
 
 def main():
     """ Defines an exception """
@@ -236,31 +249,37 @@ def main():
     except:
         File().create_file()
 
-    print("Hello friend! This is a program that searches books using Google's Book Search API.\n"
-          "It will then return a list of matches you can select from to save to a reading list file. Enjoy!")
+    print("Hello friend! This is a program that searches for books using the Google Books API.\n"
+          "It returns a list of matches you can select from to save to a reading list file. Enjoy!")
 
     while True:
         search = BookSearch()
         search.get_search_term()
         books = ReadList(search)
 
-        answer = Console().prompt("Would you like to add a book to your reading list?(y/n): ")
-        while answer == "y":
-            books.add_to_list()
-            answer = Console().prompt("Would you like to add another book to your reading list?(y/n): ")
+        if search.get_book_dict():
+            answer = Console().prompt_yn(
+                "Would you like to add a book to your reading list?(y/n): ")
+            while answer == "y":
+                books.add_to_list()
+                answer = Console().prompt_yn(
+                    "Would you like to add another book to your reading list?(y/n): ")
 
-        answer = Console().prompt("Would you like to print your reading list?(y/n): ")
-        if answer == "y":
-            books.print_read_list()
+            answer = Console().prompt_yn("Would you like to print your reading list?(y/n): ")
+            if answer == "y":
+                books.print_read_list()
 
-        answer = Console().prompt("Would you like to search for another book?(y/n): ")
-        if answer == "n":
-            print("Okay. Goodbye!")
-            break
+            answer = Console().prompt_yn("Would you like to search for another book?(y/n): ")
+            if answer == "y":
+                search.get_search_term()
+            else:
+                print("Okay. Goodbye!")
+        break
 
 
 if __name__ == "__main__":
     main()
+
 
 
 

@@ -150,6 +150,7 @@ class ReadList:
 
     def select_book(self):
         """ Gets book selection from user. """
+        self._selected_book = None
         while self._selected_book is None:
             self._selected_book = int(input("Select book number(1-5) to add to reading list: "))
             if not Validation().validate_selection(self._selected_book):
@@ -160,27 +161,27 @@ class ReadList:
         key = self._selected_book - 1
         if key in self._books.get_book_dict():
             book = self._books.get_book_dict()[key]
+            File().write_file(book)
             self._read_list.append(book)
         else:
             return "Book not found."
 
     def print_read_list(self):
         """ Prints the user's reading list. """
-        if self._read_list:
-            for item in self._read_list:
+        try:
+            books = File().read_file()
+            for book in books["books"]:
                 print('----------------------------')
-
-                if type(item.get_author()) is list:
-                    stripped = str(item.get_author())[1:-1]
+                if type(book["_author"]) is list:
+                    stripped = str(book["_author"])[1:-1]
                     print(f"Authors: {stripped}")
                 else:
-                    print(f"Author: {item.get_author()}")
+                    print(f"Author: {book['_author']}")
 
-                print(f"Title: {item.get_title()}")
-                print(f"Publisher: {item.get_publisher()}")
-
+                    print(f"Title: {book['_title']}")
+                    print(f"Publisher: {book['_publisher']}")
             print('----------------------------')
-        else:
+        except:
             print("Reading list is empty. ")
 
     def get_list(self):
@@ -204,13 +205,12 @@ class File:
         with open('read_list.json', 'w') as outfile:
             outfile.write(json_object)
 
-    def write_file(self, books):
+    def write_file(self, book):
         """ Writes to a reading list file. """
         file_data = self.read_file()
-        for book in books:
-            file_data["books"].append(book.__dict__)
+        file_data["books"].append(book.__dict__)
         with open('read_list.json', 'w') as outfile:
-            json.dump(file_data, outfile)
+            json.dump(file_data, outfile, indent=4)
 
     def read_file(self):
         """ Reads a reading list file. """
@@ -247,7 +247,6 @@ def main():
         books = ReadList(search)
 
         answer = Console().prompt("Would you like to add a book to your reading list?(y/n): ")
-
         while answer == "y":
             books.add_to_list()
             answer = Console().prompt("Would you like to add another book to your reading list?(y/n): ")
@@ -255,10 +254,6 @@ def main():
         answer = Console().prompt("Would you like to print your reading list?(y/n): ")
         if answer == "y":
             books.print_read_list()
-
-        answer = Console().prompt("Would you like to save list to file?(y/n): ")
-        if answer == "y":
-            File().write_file(books.get_list())
 
         answer = Console().prompt("Would you like read file?(y/n): ")
         if answer == "y":

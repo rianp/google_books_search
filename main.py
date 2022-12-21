@@ -47,16 +47,15 @@ class BookSearch:
     def fetch_books(self, search_term):
         """ Fetches books from API. """
         response = requests.get("https://www.googleapis.com/books/v1/volumes?q=" + search_term)
+        response.raise_for_status()
 
-        if response:
-            parsed_books = response.json()
-            if Validation().validate_response(parsed_books):
-                self.set_list(parsed_books)
-                self.print_book_list()
-            else:
-                self.search_failed()
+        parsed_books = response.json()
+        if Validation().validate_response(parsed_books):
+            self.create_book_list(parsed_books)
+            self.print_book_list()
         else:
             self.search_failed()
+
 
     def search_failed(self):
         """ Handles searches that fail to return results. """
@@ -67,13 +66,14 @@ class BookSearch:
         else:
             print("Okay! Thank you so much and goodbye!")
 
-    def set_list(self, parsed_books):
+    def create_book_list(self, parsed_books):
         """ Creates book list. """
-        for book in range(5):
-            book_object = self.create_book(book, parsed_books)
+        list_length = min(parsed_books["totalItems"], 5)
+        for book in range(list_length):
+            book_object = self.create_book_object(book, parsed_books)
             self._book_dict[book] = book_object
 
-    def create_book(self, book, parsed_books):
+    def create_book_object(self, book, parsed_books):
         """ Creates book object. """
 
         item = parsed_books["items"][book]["volumeInfo"]
@@ -243,7 +243,7 @@ class Console:
 
 
 def main():
-    """ Defines an exception """
+    """ Creates any necessary objects and calls functions to execute the program's logic. """
     try:
         File().read_file()
     except:

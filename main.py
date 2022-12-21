@@ -43,6 +43,7 @@ class BookSearch:
         self._book_dict = {}
 
     def set_search_term(self):
+        """ Gets the search term from the user. """
         while self._search_term == "":
             self._search_term = str(input("Enter book to be searched: "))
             if not Validation().validate_string(self._search_term):
@@ -151,6 +152,7 @@ class ReadList:
         self._read_list = []
 
     def select_book(self):
+        """ Gets book selection from user. """
         while self._selected_book is None:
             self._selected_book = int(input("Select book number(1-5) to add to reading list: "))
             if not Validation().validate_selection(self._selected_book):
@@ -185,6 +187,7 @@ class ReadList:
             print("Reading list is empty. ")
 
     def get_list(self):
+        """ Returns reading list. """
         return self._read_list
 
     def read_list(self):
@@ -220,43 +223,15 @@ class File:
 
 class Console:
 
-    def greeting(self):
-        print("Hello friend, this is a CLI program that searches and "
-              "saves books to a local file using the Google Books API.\n")
+    def prompt(self, string):
+        answer = ""
+        while answer == "":
+            answer = input(string).lower()
+            if not Validation().validate_bool(answer):
+                answer = ""
+        return answer
 
-    # def search_term(self):
-    #     while self._search_term == "":
-    #         self._search_term = str(input("Enter book to be searched: "))
-    #         if not Validation(self._search_term).validate_string():
-    #             self._search_term = ""
 
-    def add_book_prompt(self):
-        while self._add_book == "":
-            self._add_book = str(input("Would you like to add a book to your reading list?(y/n): ")).lower()
-            if not Validation(self._add_book).validate_bool():
-                self._add_book = ""
-
-    def select_book_prompt(self):
-        while self._selected_book is None:
-            self._selected_book = int(input("Select book number(1-5) to add to reading list: "))
-            if not Validation(self._selected_book).validate_selection():
-                 self._selected_book = None
-
-    def try_another_prompt(self):
-        while self._add_book == "":
-            self._add_book = str(input("Would you like to try another book?(y/n): ")).lower()
-            if not Validation(self._add_book).validate_bool():
-                self._add_book = ""
-
-    def reading_list_prompt(self):
-        self._print_list = str(input("Would you like to print your reading list?(y/n): ")).lower()
-        if not Validation(self._print_list).validate_bool():
-            self._print_list = ""
-
-    def search_another_prompt(self):
-        self._search_another = str(input("Would you like to search another book?(y/n): ")).lower()
-        if not Validation(self._print_list).validate_bool():
-            self._search_another = ""
 
 
 def main():
@@ -271,53 +246,26 @@ def main():
         search.search_books()
         books = ReadList(search)
 
-        answer = ""
-        while answer == "":
-            answer = input("Would you like to add a book to your reading list?(y/n): ").lower()
-            if not Validation().validate_bool(answer):
-                answer = ""
+        answer = Console().prompt("Would you like to add a book to your reading list?(y/n): ")
 
         while answer == "y":
             books.read_list()
-            answer = ""
-            while answer == "":
-                answer = input("Would you like to add another book?(y/n): ")
-                if not Validation().validate_bool(answer):
-                    answer = ""
+            answer = Console().prompt("Would you like to add another book?(y/n): ")
 
-        answer = ""
-        while answer == "":
-            answer = input("Would you like to print your reading list?(y/n): ").lower()
-            if not Validation().validate_bool(answer):
-                answer = ""
-
+        answer = Console().prompt("Would you like to print your reading list?(y/n): ")
         if answer == "y":
             books.get_read_list()
 
-
-        answer = ""
-        while answer == "":
-            answer = input("Would you like to save list to file?(y/n): ")
-            if not Validation().validate_bool(answer):
-                answer = ""
+        answer = Console().prompt("Would you like to save list to file?(y/n): ")
         if answer == "y":
             File().write_file(books.get_list())
 
-        answer = ""
-        while answer == "":
-            answer = input("Would you like read file?(y/n): ")
-            if not Validation().validate_bool(answer):
-                answer = ""
+        answer = Console().prompt("Would you like read file?(y/n): ")
         if answer == "y":
             print(File().read_file())
 
-        search_update = ""
-        while search_update == "":
-            search_update = input("Would you like to search another book?(y/n): ").lower()
-            if not Validation().validate_bool(answer):
-                search_update = ""
-
-        if search_update == "n":
+        answer = Console().prompt("Would you like to search another book?(y/n): ")
+        if answer == "n":
             print("Okay. Goodbye!")
             break
 

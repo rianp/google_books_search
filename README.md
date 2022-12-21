@@ -1,6 +1,12 @@
 # Google Books Search CLI
 
-**Welcome to the Google Books Search CLI! This command line interface allows you to search for books using the Google Books API.**
+**Welcome to the Google Books Search CLI! 
+This command line interface allows you to search for books using the Google Books API.**
+
+**My process in crafting this program was as follows: I wrote the MVP first, 
+then added classes and broke up methods to adhere to the single responsibility principle. 
+Next, I added validation and error handling for various edge cases that I encountered while manually testing. 
+Finally, I added testing.**
 
 ## Installation
 

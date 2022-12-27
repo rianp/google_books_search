@@ -19,6 +19,13 @@ class Validation:
             return False
         return True
 
+    def validate_menu_choice(self, choice):
+        """ Validates y/n selection. """
+        if choice not in ("s", "r", "m", "x"):
+            print("This is an invalid choice. ")
+            return False
+        return True
+
     def validate_selection(self, selection):
         """ Validates user's book selection. """
         if selection not in range(1, 6):
@@ -226,6 +233,13 @@ class Console:
             Console().prompt_yn(string)
         return answer
 
+    def prompt_menu_choice(self, string):
+        """ Prompts user for a yes/no answer. """
+        answer = input(string).lower()
+        if not Validation().validate_menu_choice(answer):
+            Console().prompt_menu_choice(string)
+        return answer
+
     def prompt_input(self, string):
         """ Prompts user for a string input. """
         answer = input(string).lower()
@@ -241,6 +255,18 @@ class Console:
         return answer
 
 
+class Menu:
+    """ Main menu for command options for program. """
+
+    def get_menu(self):
+        """ Display menu options and return user's choice. """
+        print("++++++++++++++Main Menu++++++++++++++")
+        answer = Console().prompt_menu_choice(
+            "Press (s) to search books.\nPress (r) to view reading list.\n"
+            "Press (m) to view menu\nPress (x) to exit\n: ")
+        return answer
+
+
 def main():
     """ Creates any necessary objects and calls functions to execute the program's logic. """
     try:
@@ -251,29 +277,35 @@ def main():
     print("Hello friend! This is a program that searches for books using the Google Books API.\n"
           "It returns a list of matches you can select from to save to a reading list file. Enjoy!")
 
-    while True:
+    answer = Menu().get_menu()
+
+    while answer != "x":
         search = BookSearch()
-        search.get_search_term()
         books = ReadList(search)
 
-        if search.get_book_dict():
-            answer = Console().prompt_yn(
-                "Would you like to add a book to your reading list?(y/n): ")
-            while answer == "y":
-                books.add_to_list()
+        if answer == "s":
+            search.get_search_term()
+            if search.get_book_dict():
                 answer = Console().prompt_yn(
-                    "Would you like to add another book to your reading list?(y/n): ")
+                    "Would you like to add a book to your reading list?(y/n): ")
+                while answer == "y":
+                    books.add_to_list()
+                    answer = Console().prompt_yn(
+                        "Would you like to add another book to your reading list?(y/n): ")
 
-            answer = Console().prompt_yn("Would you like to print your reading list?(y/n): ")
-            if answer == "y":
-                books.print_read_list()
+        elif answer == "r":
+            books.print_read_list()
+        elif answer == "m":
+            answer = Menu().get_menu()
+        elif answer == "x":
+            print("Okay goodbye!")
+            break
 
-            answer = Console().prompt_yn("Would you like to search for another book?(y/n): ")
-            if answer == "y":
-                search.get_search_term()
-            else:
-                print("Okay. Goodbye!")
-        break
+        answer = Console().prompt_menu_choice(
+            "Press (m) to display menu or (x) to exit: ")
+
+    print("Okay. Goodbye!")
+
 
 
 if __name__ == "__main__":

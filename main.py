@@ -7,8 +7,8 @@ class Validation:
 
     def validate_string(self, string):
         """ Validates user's string. """
-        if string == "":
-            print("This is an invalid choice. ")
+        if string.strip() == "":
+            print("This is an invalid string. ")
             return False
         return True
 

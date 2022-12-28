@@ -238,8 +238,6 @@ class Console:
     def prompt_menu_choice(self, string):
         """ Prompts user for a yes/no answer. """
         answer = input(string).lower()
-        if not Validation().validate_menu_choice(answer):
-            Console().prompt_menu_choice(string)
         return answer
 
     def prompt_input(self, string):
@@ -260,12 +258,15 @@ class Console:
 class Menu:
     """ Main menu for command options for program. """
 
-    def get_menu(self):
+    def select_menu_option(self):
         """ Display menu options and return user's choice. """
         print("++++++++++++++++Main Menu++++++++++++++++")
         menu_choice = Console().prompt_menu_choice(
             "Press (s) to search books.\nPress (r) to view reading list.\nPress (x) to exit\n: ")
-        return menu_choice
+        if Validation().validate_menu_choice(menu_choice):
+            return menu_choice
+        else:
+            return
 
 
 def main():
@@ -282,7 +283,7 @@ def main():
         search = BookSearch()
         books = ReadList(search)
 
-        menu_choice = Menu().get_menu()
+        menu_choice = Menu().select_menu_option()
 
         if menu_choice == "s":
             search.get_search_term()
@@ -293,12 +294,10 @@ def main():
                     books.add_to_list()
         elif menu_choice == "r":
             books.print_read_list()
-        elif menu_choice == "x":
+        else:
             break
 
-
     print("Okay. Goodbye!")
-
 
 
 if __name__ == "__main__":

@@ -3,7 +3,7 @@ import requests
 
 
 class Validation:
-    """ Validates user inputs. """
+    """ Validates user inputs and search results. """
 
     def validate_string(self, string):
         """ Validates user's string. """

@@ -75,6 +75,7 @@ class BookSearch:
 
     def create_book_list(self, parsed_books):
         """ Creates book list. """
+        print(parsed_books)
         list_length = min(parsed_books["totalItems"], 5)
         for book in range(list_length):
             book_object = self.create_book_object(book, parsed_books)
@@ -153,10 +154,11 @@ class ReadList:
 
     def select_book(self):
         """ Gets book selection from user. """
+        list_length = min(len(self._books.get_book_dict()), 5)
         self._selected_book = None
         while self._selected_book is None:
             self._selected_book = Console().prompt_selection(
-                "Select book number(1-5) to add to reading list: ")
+                f"Select book number(1-{list_length}) to add to reading list: ")
             if not Validation().validate_selection(self._selected_book):
                 self._selected_book = None
 
@@ -292,7 +294,6 @@ def main():
                     books.add_to_list()
                     answer = Console().prompt_yn(
                         "Would you like to add another book to your reading list?(y/n): ")
-
         elif answer == "r":
             books.print_read_list()
         elif answer == "m":

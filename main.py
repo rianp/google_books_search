@@ -106,15 +106,7 @@ class BookSearch:
         for index, book in self._book_dict.items():
             print("")
             print(f"----------Book {index + 1}------------")
-
-            if isinstance(book.get_author(), list):
-                stripped = ", ".join(book.get_author())
-                print(f"Authors: {stripped}")
-            else:
-                print(f"Author: {book.get_author()}")
-
-            print(f"Title: {book.get_title()}")
-            print(f"Publisher: {book.get_publisher()}")
+            print(book)
 
         print("")
 
@@ -130,6 +122,19 @@ class Book:
         self._author = authors
         self._title = title
         self._publisher = publisher
+
+    def __str__(self):
+        if isinstance(self._author, list):
+            stripped = ", ".join(self._author)
+            author = f"Authors: {stripped}"
+        else:
+            author = f"Author: {self._author}"
+
+        return f"{author}\nTitle: {self._title}\nPublisher: {self._publisher}"
+
+    def __repr__(self):
+
+        return f"Author: {self._author}, Title: {self._title}, Publisher: {self._publisher}"
 
     def get_author(self):
         """ Returns book's author. """

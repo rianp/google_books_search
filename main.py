@@ -21,7 +21,7 @@ class Validation:
 
     def validate_menu_choice(self, choice):
         """ Validates y/n selection. """
-        if choice not in ("s", "r", "m", "x"):
+        if choice not in ("s", "r", "x"):
             print("This is an invalid choice. ")
             return False
         return True
@@ -62,7 +62,6 @@ class BookSearch:
             self.print_book_list()
         else:
             self.search_failed()
-
 
     def search_failed(self):
         """ Handles searches that fail to return results. """
@@ -136,18 +135,6 @@ class Book:
 
         return f"Author: {self._author}, Title: {self._title}, Publisher: {self._publisher}"
 
-    def get_author(self):
-        """ Returns book's author. """
-        return self._author
-
-    def get_title(self):
-        """ Returns book's title. """
-        return self._title
-
-    def get_publisher(self):
-        """ Returns book's publisher. """
-        return self._publisher
-
 
 class ReadList:
     """ Creates reading list. """
@@ -166,6 +153,14 @@ class ReadList:
                 f"Select book number(1-{list_length}) to add to reading list: ")
             if not Validation().validate_selection(self._selected_book):
                 self._selected_book = None
+
+    def add_another_book(self):
+        """ Handles searches that fail to return results. """
+        add_another = Console().prompt_yn("Would you like to add another book?(y/n): ")
+        if add_another == "y":
+            self.add_to_list()
+        else:
+            return
 
     def set_read_list(self):
         """ Adds specified book to reading list. """
@@ -203,6 +198,7 @@ class ReadList:
         """ Creates a reading list. """
         self.select_book()
         self.set_read_list()
+        self.add_another_book()
 
 
 class File:
@@ -267,11 +263,10 @@ class Menu:
 
     def get_menu(self):
         """ Display menu options and return user's choice. """
-        print("++++++++++++++Main Menu++++++++++++++")
-        answer = Console().prompt_menu_choice(
-            "Press (s) to search books.\nPress (r) to view reading list.\n"
-            "Press (m) to view menu\nPress (x) to exit\n: ")
-        return answer
+        print("++++++++++++++++Main Menu++++++++++++++++")
+        menu_choice = Console().prompt_menu_choice(
+            "Press (s) to search books.\nPress (r) to view reading list.\nPress (x) to exit\n: ")
+        return menu_choice
 
 
 def main():
@@ -282,33 +277,26 @@ def main():
         File().create_file()
 
     print("Hello friend! This is a program that searches for books using the Google Books API.\n"
-          "It returns a list of matches you can select from to save to a reading list file. Enjoy!")
+          "It returns a list of matches you can select from to save to a reading list file. Enjoy!\n")
 
-    answer = Menu().get_menu()
-
-    while answer != "x":
+    while True:
         search = BookSearch()
         books = ReadList(search)
 
-        if answer == "s":
+        menu_choice = Menu().get_menu()
+
+        if menu_choice == "s":
             search.get_search_term()
             if search.get_book_dict():
                 answer = Console().prompt_yn(
                     "Would you like to add a book to your reading list?(y/n): ")
-                while answer == "y":
+                if answer == "y":
                     books.add_to_list()
-                    answer = Console().prompt_yn(
-                        "Would you like to add another book to your reading list?(y/n): ")
-        elif answer == "r":
+        elif menu_choice == "r":
             books.print_read_list()
-        elif answer == "m":
-            answer = Menu().get_menu()
-        elif answer == "x":
-            print("Okay goodbye!")
+        elif menu_choice == "x":
             break
 
-        answer = Console().prompt_menu_choice(
-            "Press (m) to display menu or (x) to exit: ")
 
     print("Okay. Goodbye!")
 

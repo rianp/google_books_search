@@ -260,7 +260,7 @@ class Menu:
 
     def select_menu_option(self):
         """ Display menu options and return user's choice. """
-        print("++++++++++++++++Main Menu++++++++++++++++")
+        print("\n++++++++++++++++Main Menu++++++++++++++++")
         menu_choice = Console().prompt_menu_choice(
             "Press (s) to search books.\nPress (r) to view reading list.\nPress (x) to exit\n: ")
         if Validation().validate_menu_choice(menu_choice):
@@ -277,7 +277,7 @@ def main():
         File().create_file()
 
     print("Hello friend! This is a program that searches for books using the Google Books API.\n"
-          "It returns a list of matches you can select from to save to a reading list file. Enjoy!\n")
+          "It returns a list of matches you can select from to save to a reading list file. Enjoy!")
 
     while True:
         search = BookSearch()
@@ -292,9 +292,11 @@ def main():
                     "Would you like to add a book to your reading list?(y/n): ")
                 if answer == "y":
                     books.add_to_list()
-        elif menu_choice == "r":
+
+        if menu_choice == "r":
             books.print_read_list()
-        else:
+
+        if menu_choice == "x":
             break
 
     print("Okay. Goodbye!")

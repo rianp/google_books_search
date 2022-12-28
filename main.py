@@ -74,7 +74,6 @@ class BookSearch:
 
     def create_book_list(self, parsed_books):
         """ Creates book list. """
-        print(parsed_books)
         list_length = min(parsed_books["totalItems"], 5)
         for book in range(list_length):
             book_object = self.create_book_object(book, parsed_books)

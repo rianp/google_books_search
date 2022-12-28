@@ -179,14 +179,14 @@ class ReadList:
             for book in books["books"]:
                 print('----------------------------')
                 if isinstance(book["_author"], list):
-                    stripped = ', '.join(book["_author"])
+                    stripped = ", ".join(book["_author"])
                     print(f"Authors: {stripped}")
                 else:
                     print(f"Author: {book['_author']}")
 
                 print(f"Title: {book['_title']}")
                 print(f"Publisher: {book['_publisher']}")
-            print('----------------------------')
+            print("----------------------------")
         else:
             print("Reading list is empty. ")
 
@@ -208,19 +208,19 @@ class File:
         books_dict = {}
         books_dict["books"] = []
         json_object = json.dumps(books_dict)
-        with open('read_list.json', 'w') as outfile:
+        with open("read_list.json", "w") as outfile:
             outfile.write(json_object)
 
     def write_file(self, book):
         """ Writes to a reading list file. """
         file_data = self.read_file()
         file_data["books"].append(book.__dict__)
-        with open('read_list.json', 'w') as outfile:
+        with open("read_list.json", "w") as outfile:
             json.dump(file_data, outfile, indent=4)
 
     def read_file(self):
         """ Reads a reading list file. """
-        with open('read_list.json', 'r') as openfile:
+        with open("read_list.json", "r") as openfile:
             json_object = json.load(openfile)
         return json_object
 

@@ -161,11 +161,23 @@ class ReadList:
         else:
             return
 
+    def check_book(self, selected_book):
+        """ Checks if book has already been added to reading list. """
+        read_list = File().read_file()
+        for book in read_list["books"]:
+            if book["_author"] in str(selected_book):
+                if book["_title"] in str(selected_book):
+                    print("This book is already in your reading list. ")
+                    self.add_another_book()
+            else:
+                pass
+
     def set_read_list(self):
         """ Adds specified book to reading list. """
         key = self._selected_book - 1
         if key in self._books.get_book_dict():
             book = self._books.get_book_dict()[key]
+            self.check_book(book)
             File().write_file(book)
             self._read_list.append(book)
         else:

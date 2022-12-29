@@ -49,7 +49,11 @@ class BookSearch:
     def get_search_term(self):
         """ Gets the search term from the user. """
         search_term = Console().prompt_input("Enter book to be searched: ")
-        self.fetch_books(search_term)
+        if Validation().validate_string(search_term):
+            self.fetch_books(search_term)
+        else:
+            self.get_search_term()
+
 
     def fetch_books(self, search_term):
         """ Fetches books from API. """
@@ -275,8 +279,6 @@ class Console:
     def prompt_input(self, string):
         """ Prompts user for a string input. """
         answer = input(string).lower()
-        if not Validation().validate_string(answer):
-            Console().prompt_input(string)
         return answer
 
     def prompt_selection(self, string):

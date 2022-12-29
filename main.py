@@ -22,13 +22,13 @@ class Validation:
     def validate_menu_choice(self, choice):
         """ Validates y/n selection. """
         if choice not in ("s", "r", "x"):
-            print("This is an invalid choice. ")
+            print("This is an invalid  menu choice. ")
             return False
         return True
 
-    def validate_selection(self, selection):
+    def validate_selection(self, selection, list_length):
         """ Validates user's book selection. """
-        if selection not in range(1, 6):
+        if selection not in range(1, list_length):
             print("Book number not found.")
             return False
         return True
@@ -131,6 +131,7 @@ class Book:
         self._publisher = publisher
 
     def __str__(self):
+        """ Returns a formatted string version of a book object instance. """
         if isinstance(self._author, list):
             stripped = ", ".join(self._author)
             author = f"Authors: {stripped}"
@@ -140,7 +141,7 @@ class Book:
         return f"{author}\nTitle: {self._title}\nPublisher: {self._publisher}"
 
     def __repr__(self):
-
+        """ Returns an unformatted string of a book object instance. """
         return f"Author: {self._author}, Title: {self._title}, Publisher: {self._publisher}"
 
 
@@ -159,7 +160,7 @@ class ReadList:
         while self._selected_book is None:
             self._selected_book = Console().prompt_selection(
                 f"Select book number(1-{list_length}) to add to reading list: ")
-            if not Validation().validate_selection(self._selected_book):
+            if not Validation().validate_selection(self._selected_book, list_length):
                 self._selected_book = None
 
     def add_another_book(self):

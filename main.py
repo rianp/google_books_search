@@ -223,26 +223,36 @@ class ReadList:
 
 class File:
     """ Creates and adds to JSON file. """
+    def __init__(self):
+        self._filename = "read_list.json"
 
     def create_file(self):
         """ Creates a reading list file. """
         books_dict = {}
         books_dict["books"] = []
         json_object = json.dumps(books_dict)
-        with open("read_list.json", "w") as outfile:
+        with open(self._filename, "w") as outfile:
             outfile.write(json_object)
 
     def write_file(self, book):
         """ Writes to a reading list file. """
         file_data = self.read_file()
         file_data["books"].append(book.__dict__)
-        with open("read_list.json", "w") as outfile:
-            json.dump(file_data, outfile, indent=4)
+        try:
+            with open(self._filename, "w") as outfile:
+                json.dump(file_data, outfile, indent=4)
+        except FileNotFoundError:
+            print(f"Sorry, the file {self._filename} does not exist.")
+
+
 
     def read_file(self):
         """ Reads a reading list file. """
-        with open("read_list.json", "r") as openfile:
-            json_object = json.load(openfile)
+        try:
+            with open(self._filename, "r") as openfile:
+                json_object = json.load(openfile)
+        except FileNotFoundError:
+            print(f"Sorry, the file {self._filename} does not exist.")
         return json_object
 
 
@@ -257,7 +267,7 @@ class Console:
         return answer
 
     def prompt_menu_choice(self, string):
-        """ Prompts user for a yes/no answer. """
+        """ Prompts user for a menu choice. """
         answer = input(string).lower()
         return answer
 

@@ -51,8 +51,9 @@ class BookSearch:
         search_term = Console().prompt_input("Enter book to be searched: ")
         if Validation().validate_string(search_term):
             self.fetch_books(search_term)
+            return True
         else:
-            self.get_search_term()
+            return False
 
     def fetch_books(self, search_term):
         """ Fetches books from API. """
@@ -71,6 +72,7 @@ class BookSearch:
         parsed_books = response.json()
         if Validation().validate_response(parsed_books):
             self._parsed_books = parsed_books
+            return True
         else:
             Console().print_string("There were no matches. ")
             return False

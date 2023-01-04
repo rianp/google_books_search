@@ -72,18 +72,11 @@ class BookSearch:
         if Validation().validate_response(parsed_books):
             self._parsed_books = parsed_books
         else:
-            self.search_failed()
-
-    def search_failed(self):
-        """ Handles searches that fail to return results. """
-        Console().print_string("There were no matches. ")
-        retry = Console().prompt_yn("Would you like to search again?(y/n): ")
-        if retry == "y":
-            self.get_search_term()
-        else:
-            Console().print_string("Okay! Thank you so much and goodbye!")
+            Console().print_string("There were no matches. ")
+            return False
 
     def get_parsed_books(self):
+        """ Returns parsed books dictionary. """
         return self._parsed_books
 
 
@@ -206,10 +199,6 @@ class ReadList:
         else:
             Console().print_string("Book not found.")
 
-    def get_list(self):
-        """ Returns reading list. """
-        return self._read_list
-
     def add_to_list(self):
         """ Creates a reading list. """
         self.select_book()
@@ -241,7 +230,7 @@ class File:
             Console().print_string(f"Sorry, the file {self._filename} does not exist.")
 
     def print_file(self):
-        """ Prints the user's reading list. """
+        """ Prints the user's reading list file. """
         books = File().read_file()
         if books["books"]:
             for book in books["books"]:
@@ -315,16 +304,17 @@ def main():
         menu_choice = Menu().select_menu_option()
 
         if menu_choice == "s":
-            search.get_search_term()
-            book_list = BookList(search)
-            book_list.create_book_list()
-            book_list.print_book_list()
-            books = ReadList(book_list)
-            if book_list.get_book_dict():
-                answer = Console().prompt_yn(
-                    "Would you like to add a book to your reading list?(y/n): ")
-                if answer == "y":
-                    books.add_to_list()
+            term = search.get_search_term()
+            if term:
+                book_list = BookList(search)
+                book_list.create_book_list()
+                book_list.print_book_list()
+                books = ReadList(book_list)
+                if book_list.get_book_dict():
+                    answer = Console().prompt_yn(
+                        "Would you like to add a book to your reading list?(y/n): ")
+                    if answer == "y":
+                        books.add_to_list()
 
         if menu_choice == "r":
             File().print_file()

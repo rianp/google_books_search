@@ -22,7 +22,6 @@ class Validation:
     def validate_menu_choice(self, choice):
         """ Validates y/n selection. """
         if choice not in ("s", "r", "x"):
-            print("This is an invalid  menu choice. ")
             return False
         return True
 
@@ -54,7 +53,6 @@ class BookSearch:
         else:
             self.get_search_term()
 
-
     def fetch_books(self, search_term):
         """ Fetches books from API. """
         try:
@@ -71,26 +69,78 @@ class BookSearch:
 
         parsed_books = response.json()
         if Validation().validate_response(parsed_books):
-            self.create_book_list(parsed_books)
-            self.print_book_list()
+            book_list = BookList()
+            book_list.create_book_list(parsed_books)
+            book_list.print_book_list()
         else:
             self.search_failed()
 
+        # parsed_books = response.json()
+        # if Validation().validate_response(parsed_books):
+        #     self.create_book_list(parsed_books)
+        #     self.print_book_list()
+        # else:
+        #     self.search_failed()
+
     def search_failed(self):
         """ Handles searches that fail to return results. """
-        print("There were no matches. ")
+        Console().print_string("There were no matches. ")
         retry = Console().prompt_yn("Would you like to search again?(y/n): ")
         if retry == "y":
             self.get_search_term()
         else:
-            print("Okay! Thank you so much and goodbye!")
+            Console().print_string("Okay! Thank you so much and goodbye!")
+
+    # def create_book_list(self, parsed_books):
+    #     """ Creates book list. """
+    #     list_length = min(parsed_books["totalItems"], 5)
+    #     for book in range(list_length):
+    #         book_object = self.create_book_object(book, parsed_books)
+    #         self._book_dict[book] = book_object
+    #
+    # def create_book_object(self, book, parsed_books):
+    #     """ Creates book object. """
+    #     item = parsed_books["items"][book]["volumeInfo"]
+    #
+    #     if "authors" not in item:
+    #         author = []
+    #     elif len(item["authors"]) > 1:
+    #         author = item["authors"]
+    #     else:
+    #         author = item["authors"][0]
+    #
+    #     title = item["title"]
+    #
+    #     if "publisher" not in item:
+    #         publisher = ""
+    #     else:
+    #         publisher = item["publisher"]
+    #
+    #     return Book(author, title, publisher)
+    #
+    # def print_book_list(self):
+    #     """ Prints book list. """
+    #     for index, book in self._book_dict.items():
+    #         Console().print_string(f"\n----------Book {index + 1}------------\n{book}")
+    #
+    # def get_book_dict(self):
+    #     """ Returns book list. """
+    #     return self._book_dict
+
+
+class BookList:
+
+    def __init__(self):
+        self._book_dict = {}
 
     def create_book_list(self, parsed_books):
         """ Creates book list. """
+        File("book_list.json").create_file()
         list_length = min(parsed_books["totalItems"], 5)
         for book in range(list_length):
             book_object = self.create_book_object(book, parsed_books)
             self._book_dict[book] = book_object
+            File("book_list.json").write_file(book_object)
 
     def create_book_object(self, book, parsed_books):
         """ Creates book object. """
@@ -115,9 +165,7 @@ class BookSearch:
     def print_book_list(self):
         """ Prints book list. """
         for index, book in self._book_dict.items():
-            Console.print_string(f"\n----------Book {index + 1}------------\n{book}")
-
-        print("")
+            Console().print_string(f"\n----------Book {index + 1}------------\n{book}")
 
     def get_book_dict(self):
         """ Returns book list. """
@@ -150,18 +198,18 @@ class Book:
 class ReadList:
     """ Creates reading list. """
 
-    def __init__(self, book_search):
-        self._books = book_search
+    def __init__(self):
+        self._books = File("book_list.json").read_file()
         self._selected_book = None
         self._read_list = []
 
     def select_book(self):
         """ Gets book selection from user. """
-        list_length = min(len(self._books.get_book_dict()), 5)
+        list_length = min(len(self._books["books"]), 5)
         self._selected_book = None
         while self._selected_book is None:
-            self._selected_book = Console().prompt_selection(
-                f"Select book number(1-{list_length}) to add to reading list: ")
+            self._selected_book = int(Console().prompt_input(
+                f"Select book number(1-{list_length}) to add to reading list: "))
             if not Validation().validate_selection(self._selected_book, list_length):
                 self._selected_book = None
 
@@ -175,11 +223,11 @@ class ReadList:
 
     def check_book(self, selected_book):
         """ Checks if book has already been added to reading list. """
-        read_list = File().read_file()
+        read_list = File("read_list.json").read_file()
         for book in read_list["books"]:
             if book["_author"] in str(selected_book):
                 if book["_title"] in str(selected_book):
-                    print("This book is already in your reading list. ")
+                    Console().print_string("This book is already in your reading list. ")
                     self.add_another_book()
             else:
                 pass
@@ -187,31 +235,30 @@ class ReadList:
     def set_read_list(self):
         """ Adds specified book to reading list. """
         key = self._selected_book - 1
-        if key in self._books.get_book_dict():
-            book = self._books.get_book_dict()[key]
-            self.check_book(book)
-            File().write_file(book)
-            self._read_list.append(book)
-        else:
-            print("Book not found.")
+        for index in range(len(self._books["books"])):
+            if key == index:
+                book = self._books["books"][key]  # create book or not to create book that is the question
+                self.check_book(book)
+                File("read_list.json").write_file(book)
+                self._read_list.append(book)
+            else:
+                Console().print_string("Book not found.")
 
-    def print_read_list(self):
+    def __str__(self):
         """ Prints the user's reading list. """
-        books = File().read_file()
+        books = File("read_list.json").read_file()
         if books["books"]:
             for book in books["books"]:
-                print('----------------------------')
                 if isinstance(book["_author"], list):
                     stripped = ", ".join(book["_author"])
-                    print(f"Authors: {stripped}")
+                    author = f"Authors: {stripped}"
                 else:
-                    print(f"Author: {book['_author']}")
+                    author = f"Author: {book['_author']}"
 
-                print(f"Title: {book['_title']}")
-                print(f"Publisher: {book['_publisher']}")
-            print("----------------------------")
+                return f"----------------------------\n{author}\nTitle: {book['_title']}\n" \
+                       f"Publisher: {book['_publisher']}\n----------------------------"
         else:
-            print("Reading list is empty. ")
+            return "Reading list is empty. "
 
     def get_list(self):
         """ Returns reading list. """
@@ -226,8 +273,8 @@ class ReadList:
 
 class File:
     """ Creates and adds to JSON file. """
-    def __init__(self):
-        self._filename = "read_list.json"
+    def __init__(self, file_name):
+        self._filename = file_name
 
     def create_file(self):
         """ Creates a reading list file. """
@@ -245,9 +292,7 @@ class File:
             with open(self._filename, "w") as outfile:
                 json.dump(file_data, outfile, indent=4)
         except FileNotFoundError:
-            print(f"Sorry, the file {self._filename} does not exist.")
-
-
+            Console().print_string(f"Sorry, the file {self._filename} does not exist.")
 
     def read_file(self):
         """ Reads a reading list file. """
@@ -269,21 +314,9 @@ class Console:
             Console().prompt_yn(string)
         return answer
 
-    def prompt_menu_choice(self, string):
-        """ Prompts user for a menu choice. """
-        answer = input(string).lower()
-        return answer
-
     def prompt_input(self, string):
         """ Prompts user for a string input. """
         answer = input(string).lower()
-        return answer
-
-    def prompt_selection(self, string):
-        """ Prompts user for a selection between 1-5. """
-        answer = int(input(string))
-        if not Validation().validate_selection(answer):
-            Console().prompt_selection(string)
         return answer
 
     def print_string(self, string):
@@ -295,46 +328,47 @@ class Menu:
 
     def select_menu_option(self):
         """ Display menu options and return user's choice. """
-        print("\n++++++++++++++++Main Menu++++++++++++++++")
-        menu_choice = Console().prompt_menu_choice(
-            "Press (s) to search books.\nPress (r) to view reading list.\nPress (x) to exit\n: ")
+        menu_choice = Console().prompt_input(
+            "\n++++++++++++++++Main Menu++++++++++++++++\nPress (s) to search books."
+            "\nPress (r) to view reading list.\nPress (x) to exit\n: ")
         if Validation().validate_menu_choice(menu_choice):
             return menu_choice
         else:
+            Console().print_string("This is an invalid  menu choice. ")
             return
 
 
 def main():
     """ Creates any necessary objects and calls functions to execute the program's logic. """
     try:
-        File().read_file()
+        File("read_list.json").read_file()
     except:
-        File().create_file()
+        File("read_list.json").create_file()
 
-    print("Hello friend! This is a program that searches for books using the Google Books API.\n"
+    Console().print_string("Hello friend! This is a program that searches for books using the Google Books API.\n"
           "It returns a list of matches you can select from to save to a reading list file. Enjoy!")
 
     while True:
         search = BookSearch()
-        books = ReadList(search)
+        books = ReadList()
 
         menu_choice = Menu().select_menu_option()
 
         if menu_choice == "s":
             search.get_search_term()
-            if search.get_book_dict():
+            if search:
                 answer = Console().prompt_yn(
-                    "Would you like to add a book to your reading list?(y/n): ")
+                    "\nWould you like to add a book to your reading list?(y/n): ")
                 if answer == "y":
                     books.add_to_list()
 
         if menu_choice == "r":
-            books.print_read_list()
+            Console().print_string(books.__str__())
 
         if menu_choice == "x":
             break
 
-    print("Okay. Goodbye!")
+    Console().print_string("Okay. Goodbye!")
 
 
 if __name__ == "__main__":

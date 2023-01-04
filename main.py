@@ -115,9 +115,7 @@ class BookSearch:
     def print_book_list(self):
         """ Prints book list. """
         for index, book in self._book_dict.items():
-            print("")
-            print(f"----------Book {index + 1}------------")
-            print(book)
+            Console.print_string(f"\n----------Book {index + 1}------------\n{book}")
 
         print("")
 
@@ -287,6 +285,9 @@ class Console:
         if not Validation().validate_selection(answer):
             Console().prompt_selection(string)
         return answer
+
+    def print_string(self, string):
+        print(string)
 
 
 class Menu:

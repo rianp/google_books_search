@@ -54,7 +54,6 @@ class BookSearch:
         else:
             self.get_search_term()
 
-
     def fetch_books(self, search_term):
         """ Fetches books from API. """
         try:
@@ -89,6 +88,8 @@ class BookSearch:
 
 
 class BookList:
+    """ Creates a book list object. """
+
     def __init__(self, search):
         self._book_dict = {}
         self._parsed_books = search.get_parsed_books()
@@ -166,8 +167,8 @@ class ReadList:
         list_length = min(len(self._books.get_book_dict()), 5)
         self._selected_book = None
         while self._selected_book is None:
-            self._selected_book = Console().prompt_selection(
-                f"Select book number(1-{list_length}) to add to reading list: ")
+            self._selected_book = int(Console().prompt_input(
+                f"Select book number(1-{list_length}) to add to reading list: "))
             if not Validation().validate_selection(self._selected_book, list_length):
                 self._selected_book = None
 
@@ -216,11 +217,10 @@ class ReadList:
                 else:
                     author = f"Author: {book['_author']}"
 
-                Console().print_string(f"\n----------------------------\n{author}\n"
-                                       f"Title: {book['_title']}\nPublisher: {book['_publisher']}\n"
-                                       f"----------------------------")
+                return f"\n----------------------------\n{author}\nTitle: {book['_title']}" \
+                       f"\nPublisher: {book['_publisher']}\n----------------------------"
         else:
-            Console().print_string("Reading list is empty. ")
+            return "Reading list is empty. "
 
     def get_list(self):
         """ Returns reading list. """
@@ -283,11 +283,6 @@ class Console:
         answer = input(string).lower()
         return answer
 
-    def prompt_selection(self, string):
-        """ Prompts user for a selection between 1-5. """
-        answer = int(input(string))
-        return answer
-
     def print_string(self, string):
         print(string)
 
@@ -335,7 +330,7 @@ def main():
                     books.add_to_list()
 
         if menu_choice == "r":
-            books.print_read_list()
+            Console().print_string(books.print_read_list())
 
         if menu_choice == "x":
             break

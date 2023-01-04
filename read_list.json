@@ -1,9 +1,22 @@
 {
     "books": [
         {
-            "_author": "Annie F. Downs",
-            "_title": "That Sounds Fun",
-            "_publisher": "Revell"
+            "_author": "June Rae Wood",
+            "_title": "The Man Who Loved Clowns",
+            "_publisher": "Penguin"
+        },
+        {
+            "_author": [
+                "Linus Torvalds",
+                "David Diamond"
+            ],
+            "_title": "Just for Fun",
+            "_publisher": "Harper Collins"
+        },
+        {
+            "_author": "Jan Thomas",
+            "_title": "Is Everyone Ready for Fun?",
+            "_publisher": "Simon and Schuster"
         }
     ]
 }

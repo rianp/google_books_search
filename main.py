@@ -206,22 +206,6 @@ class ReadList:
         else:
             Console().print_string("Book not found.")
 
-    def print_read_list(self):
-        """ Prints the user's reading list. """
-        books = File().read_file()
-        if books["books"]:
-            for book in books["books"]:
-                if isinstance(book["_author"], list):
-                    stripped = ", ".join(book["_author"])
-                    author = f"Authors: {stripped}"
-                else:
-                    author = f"Author: {book['_author']}"
-
-                return f"\n----------------------------\n{author}\nTitle: {book['_title']}" \
-                       f"\nPublisher: {book['_publisher']}\n----------------------------"
-        else:
-            return "Reading list is empty. "
-
     def get_list(self):
         """ Returns reading list. """
         return self._read_list
@@ -256,7 +240,21 @@ class File:
         except FileNotFoundError:
             Console().print_string(f"Sorry, the file {self._filename} does not exist.")
 
+    def print_file(self):
+        """ Prints the user's reading list. """
+        books = File().read_file()
+        if books["books"]:
+            for book in books["books"]:
+                if isinstance(book["_author"], list):
+                    stripped = ", ".join(book["_author"])
+                    author = f"Authors: {stripped}"
+                else:
+                    author = f"Author: {book['_author']}"
 
+                Console().print_string(f"\n----------------------------\n{author}\nTitle: {book['_title']}"
+                                       f"\nPublisher: {book['_publisher']}\n----------------------------")
+        else:
+            Console().print_string("Reading list is empty. ")
 
     def read_file(self):
         """ Reads a reading list file. """
@@ -313,7 +311,6 @@ def main():
 
     while True:
         search = BookSearch()
-        books = ReadList(search)
 
         menu_choice = Menu().select_menu_option()
 
@@ -330,7 +327,7 @@ def main():
                     books.add_to_list()
 
         if menu_choice == "r":
-            Console().print_string(books.print_read_list())
+            File().print_file()
 
         if menu_choice == "x":
             break

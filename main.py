@@ -15,21 +15,18 @@ class Validation:
     def validate_bool(self, choice):
         """ Validates y/n selection. """
         if choice not in ("y", "n"):
-            Console().print_string("This is an invalid choice. ")
             return False
         return True
 
     def validate_menu_choice(self, choice):
         """ Validates y/n selection. """
         if choice not in ("s", "r", "x"):
-            Console().print_string("This is an invalid  menu choice. ")
             return False
         return True
 
     def validate_selection(self, selection, list_length):
         """ Validates user's book selection. """
         if selection not in range(1, list_length + 1):
-            Console().print_string("Book number not found.")
             return False
         return True
 
@@ -38,6 +35,25 @@ class Validation:
         if not json_response["totalItems"]:
             return False
         return True
+
+
+class APIFetch:
+
+    def fetch_books(self, search_term):
+        """ Fetches books from API. """
+        try:
+            response = requests.get("https://www.googleapis.com/books/v1/volumes?q=" + search_term)
+            response.raise_for_status()
+        except requests.exceptions.HTTPError as errh:
+            return "An Http Error occurred:" + repr(errh)
+        except requests.exceptions.ConnectionError as errc:
+            return "An Error Connecting to the API occurred:" + repr(errc)
+        except requests.exceptions.Timeout as errt:
+            return "A Timeout Error occurred:" + repr(errt)
+        except requests.exceptions.RequestException as err:
+            return "An Unknown Error occurred" + repr(err)
+
+        return response.json()
 
 
 class BookSearch:
@@ -56,20 +72,8 @@ class BookSearch:
             return False
 
     def fetch_books(self, search_term):
-        """ Fetches books from API. """
-        try:
-            response = requests.get("https://www.googleapis.com/books/v1/volumes?q=" + search_term)
-            response.raise_for_status()
-        except requests.exceptions.HTTPError as errh:
-            return "An Http Error occurred:" + repr(errh)
-        except requests.exceptions.ConnectionError as errc:
-            return "An Error Connecting to the API occurred:" + repr(errc)
-        except requests.exceptions.Timeout as errt:
-            return "A Timeout Error occurred:" + repr(errt)
-        except requests.exceptions.RequestException as err:
-            return "An Unknown Error occurred" + repr(err)
 
-        parsed_books = response.json()
+        parsed_books = APIFetch().fetch_books(search_term)
         if Validation().validate_response(parsed_books):
             self._parsed_books = parsed_books
             return True
@@ -99,7 +103,7 @@ class BookList:
     def create_book_object(self, book):
         """ Creates book object. """
         item = self._parsed_books["items"][book]["volumeInfo"]
-
+        book_id = self._parsed_books["items"][book]["id"]
         if "authors" not in item:
             author = []
         elif len(item["authors"]) > 1:
@@ -114,7 +118,7 @@ class BookList:
         else:
             publisher = item["publisher"]
 
-        return Book(author, title, publisher)
+        return Book(book_id, author, title, publisher)
 
     def print_book_list(self):
         """ Prints book list. """
@@ -129,7 +133,8 @@ class BookList:
 class Book:
     """ Creates book object. """
 
-    def __init__(self, authors, title, publisher):
+    def __init__(self, book_id, authors, title, publisher):
+        self._book_id = book_id
         self._author = authors
         self._title = title
         self._publisher = publisher
@@ -155,57 +160,56 @@ class ReadList:
     def __init__(self, book_search):
         self._books = book_search
         self._selected_book = None
-        self._read_list = []
 
     def select_book(self):
         """ Gets book selection from user. """
         list_length = min(len(self._books.get_book_dict()), 5)
-        self._selected_book = None
-        while self._selected_book is None:
-            self._selected_book = int(Console().prompt_input(
-                f"Select book number(1-{list_length}) to add to reading list: "))
-            if not Validation().validate_selection(self._selected_book, list_length):
-                self._selected_book = None
+
+        selected_book = int(Console().prompt_input(
+            f"Select book number(1-{list_length}) to add to reading list: "))
+
+        if not Validation().validate_selection(selected_book, list_length):
+            Console().print_string("Book number not found.")
+            self.select_book()
+
+        return selected_book
 
     def add_another_book(self):
         """ Handles searches that fail to return results. """
         add_another = Console().prompt_yn("Would you like to add another book?(y/n): ")
         if add_another == "y":
-            self.add_to_list()
+            return True
         else:
-            return
+            return False
 
-    def check_book(self, selected_book):
+    def check_book_is_new(self):
         """ Checks if book has already been added to reading list. """
         read_list = File().read_file()
         for book in read_list["books"]:
-            if isinstance(book["_author"], list):
-                author = ", ".join(book["_author"])
-            else:
-                author = book["_author"]
-            if author in str(selected_book):
-                if book["_title"] in str(selected_book):
-                    Console().print_string("This book is already in your reading list. ")
-                    self.add_another_book()
-            else:
-                pass
+            book_id = book["_book_id"]
+            if book_id in str(self._selected_book):
+                return False
+            return True
 
     def set_read_list(self):
         """ Adds specified book to reading list. """
         key = self._selected_book - 1
-        if key in self._books.get_book_dict():
-            book = self._books.get_book_dict()[key]
-            self.check_book(book)
-            File().write_file(book)
-            self._read_list.append(book)
-        else:
-            Console().print_string("Book not found.")
+        book = self._books.get_book_dict()[key]
+        File().write_file(book)
 
-    def add_to_list(self):
+    def create_list(self):
         """ Creates a reading list. """
-        self.select_book()
-        self.set_read_list()
-        self.add_another_book()
+        self._selected_book = self.select_book()
+
+        if self.check_book_is_new():
+            self.set_read_list()
+        else:
+            self.select_book()
+
+        if self.add_another_book():
+            self.create_list()
+        else:
+            return
 
 
 class File:
@@ -264,6 +268,7 @@ class Console:
         """ Prompts user for a yes/no answer. """
         answer = input(string).lower()
         if not Validation().validate_bool(answer):
+            self.print_string("This is an invalid choice. ")
             Console().prompt_yn(string)
         return answer
 
@@ -284,10 +289,11 @@ class Menu:
         menu_choice = Console().prompt_input(
             "\n++++++++++++++++Main Menu++++++++++++++++\nPress (s) to search books.\n"
             "Press (r) to view reading list.\nPress (x) to exit\n: ")
-        if Validation().validate_menu_choice(menu_choice):
-            return menu_choice
+        if not Validation().validate_menu_choice(menu_choice):
+            Console().print_string("This is an invalid  menu choice. ")
+            self.select_menu_option()
         else:
-            return
+            return menu_choice
 
 
 def main():
@@ -316,7 +322,7 @@ def main():
                     answer = Console().prompt_yn(
                         "Would you like to add a book to your reading list?(y/n): ")
                     if answer == "y":
-                        books.add_to_list()
+                        books.create_list()
 
         if menu_choice == "r":
             File().print_file()

@@ -1,32 +1,40 @@
 {
     "books": [
         {
+            "_book_id": "97RzSrEB8kkC",
             "_author": "June Rae Wood",
             "_title": "The Man Who Loved Clowns",
             "_publisher": "Penguin"
         },
         {
-            "_author": [
-                "Linus Torvalds",
-                "David Diamond"
-            ],
-            "_title": "Just for Fun",
+            "_book_id": "NXnBRDR-DUQC",
+            "_author": "Nick Malgieri",
+            "_title": "Cookies Unlimited",
             "_publisher": "Harper Collins"
         },
         {
+            "_book_id": "Zt6aAwAAQBAJ",
+            "_author": "Nick Brownlee",
+            "_title": "Bubblegum The History Of Plastic Pop",
+            "_publisher": "Bobcat Books"
+        },
+        {
+            "_book_id": "An5gIJM8tD0C",
             "_author": "Jan Thomas",
             "_title": "Is Everyone Ready for Fun?",
             "_publisher": "Simon and Schuster"
         },
         {
-            "_author": "Dean Ray Koontz",
-            "_title": "The funhouse",
-            "_publisher": ""
+            "_book_id": "a5CenmHgHc4C",
+            "_author": "Jerry Pallotta",
+            "_title": "The Furry Animal Alphabet Book",
+            "_publisher": "Charlesbridge Publishing"
         },
         {
-            "_author": "Margaret Wise Brown",
-            "_title": "The Colour Kittens",
-            "_publisher": "Golden Books"
+            "_book_id": "TbouDwAAQBAJ",
+            "_author": "America's Test Kitchen",
+            "_title": "The Perfect Cookie",
+            "_publisher": "America's Test Kitchen"
         }
     ]
 }

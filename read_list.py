@@ -13,18 +13,18 @@ class ReadList:
         """ Gets book selection from user. """
         list_length = min(len(self._books.get_book_dict()), 5)
 
-        selected_book = int(Console().prompt_input(
+        selected_book = int(Console.prompt_input(
             f"Select book number(1-{list_length}) to add to reading list: "))
 
         if not Validation.validate_selection(selected_book, list_length):
-            Console().print_string("Book number not found.")
+            Console.print_string("Book number not found.")
             self._select_book()
 
         return selected_book
 
     def _add_another_book(self):
         """ Handles searches that fail to return results. """
-        add_another = Console().prompt_yn("Would you like to add another book?(y/n): ")
+        add_another = Console.prompt_yn("Would you like to add another book?(y/n): ")
         if add_another == "y":
             return True
         else:

@@ -22,7 +22,7 @@ class File:
             with open(self._filename, "w") as outfile:
                 json.dump(file_data, outfile, indent=4)
         except FileNotFoundError:
-            Console().print_string(f"Sorry, the file {self._filename} does not exist.")
+            Console.print_string(f"Sorry, the file {self._filename} does not exist.")
 
     def print_file(self):
         """ Prints the user's reading list file. """
@@ -35,10 +35,10 @@ class File:
                 else:
                     author = f"Author: {book['_author']}"
 
-                Console().print_string(f"\n----------------------------\n{author}\nTitle: {book['_title']}"
+                Console.print_string(f"\n----------------------------\n{author}\nTitle: {book['_title']}"
                                        f"\nPublisher: {book['_publisher']}\n----------------------------")
         else:
-            Console().print_string("Reading list is empty. ")
+            Console.print_string("Reading list is empty. ")
 
     def read_file(self):
         """ Reads a reading list file. """
@@ -46,5 +46,5 @@ class File:
             with open(self._filename, "r") as openfile:
                 json_object = json.load(openfile)
         except FileNotFoundError:
-            Console().print_string(f"Sorry, the file {self._filename} does not exist.")
+            Console.print_string(f"Sorry, the file {self._filename} does not exist.")
         return json_object

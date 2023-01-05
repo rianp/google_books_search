@@ -2,7 +2,8 @@ import requests
 
 class APIFetch:
 
-    def fetch_books(self, search_term):
+    @staticmethod
+    def fetch_books(search_term):
         """ Fetches books from API. """
         try:
             response = requests.get("https://www.googleapis.com/books/v1/volumes?q=" + search_term)

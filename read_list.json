@@ -50,6 +50,36 @@
             "_author": "Alison Bechdel",
             "_title": "Fun Home",
             "_publisher": "Houghton Mifflin Harcourt"
+        },
+        {
+            "_book_id": "An5gIJM8tD0C",
+            "_author": "Jan Thomas",
+            "_title": "Is Everyone Ready for Fun?",
+            "_publisher": "Simon and Schuster"
+        },
+        {
+            "_book_id": "6zSWd8Ou8BAC",
+            "_author": [
+                "Linus Torvalds",
+                "David Diamond"
+            ],
+            "_title": "Just for Fun",
+            "_publisher": "Harper Collins"
+        },
+        {
+            "_book_id": "6zSWd8Ou8BAC",
+            "_author": [
+                "Linus Torvalds",
+                "David Diamond"
+            ],
+            "_title": "Just for Fun",
+            "_publisher": "Harper Collins"
+        },
+        {
+            "_book_id": "An5gIJM8tD0C",
+            "_author": "Jan Thomas",
+            "_title": "Is Everyone Ready for Fun?",
+            "_publisher": "Simon and Schuster"
         }
     ]
 }

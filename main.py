@@ -24,11 +24,10 @@ def main():
             term = Console.get_search_term()
             if term:
                 response = APIFetch.fetch_books(term)
-                books = Validation.validate_response(response)
-                if not books:
+                if not Validation.validate_response(response):
                     Console.print_string("There were no matches. ")
                 else:
-                    book_list = BookList(books)
+                    book_list = BookList(response)
                     book_dictionary = book_list.create_book_list()
                     Console.print_book_list(book_dictionary)
 

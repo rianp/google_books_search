@@ -20,3 +20,7 @@ class Book:
     def __repr__(self):
         """ Returns an unformatted string of a book object instance. """
         return f"Author: {self._author}, Title: {self._title}, Publisher: {self._publisher}"
+
+    def get_book_id(self):
+        """ Returns the book id. """
+        return self._book_id

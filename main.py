@@ -13,8 +13,10 @@ def main():
 
     Console.print_string("Hello friend! This is a program that searches for books using the Google Books API.\n"
                            "It returns a list of matches you can select from to save to a reading list file. Enjoy!")
-    while True:
-        select_from_menu()
+
+    program_state = True
+    while program_state:
+        program_state = select_from_menu()
 
     Console.print_string("Okay. Goodbye!")
 
@@ -42,6 +44,7 @@ def search_books():
     search_results = get_search_results()
     if not Validation.validate_response(search_results):
         Console.print_string("There were no matches. ")
+        search_books()
     else:
         book_list = create_book_list(search_results)
         ask_to_add_book_to_reading_list(book_list)
@@ -51,7 +54,7 @@ def get_search_results():
     if not Validation.validate_string(search_term):
         Console.print_string("This is an invalid string. ")
         search_books()
-    if search_term:
+    else:
         return APIFetch.fetch_books(search_term)
 
 def create_book_list(search_results):

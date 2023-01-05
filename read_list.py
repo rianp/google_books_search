@@ -52,7 +52,6 @@ class ReadList:
 
         if not self._check_book_is_new(selected_book):
             Console.print_string("This book is already in your reading list :) ")
-            self._select_book()
         else:
             File().write_file(selected_book)
 

@@ -9,20 +9,20 @@ class ReadList:
         self._books = book_search
         self._selected_book = None
 
-    def select_book(self):
+    def _select_book(self):
         """ Gets book selection from user. """
         list_length = min(len(self._books.get_book_dict()), 5)
 
         selected_book = int(Console().prompt_input(
             f"Select book number(1-{list_length}) to add to reading list: "))
 
-        if not Validation().validate_selection(selected_book, list_length):
+        if not Validation.validate_selection(selected_book, list_length):
             Console().print_string("Book number not found.")
-            self.select_book()
+            self._select_book()
 
         return selected_book
 
-    def add_another_book(self):
+    def _add_another_book(self):
         """ Handles searches that fail to return results. """
         add_another = Console().prompt_yn("Would you like to add another book?(y/n): ")
         if add_another == "y":
@@ -30,7 +30,7 @@ class ReadList:
         else:
             return False
 
-    def check_book_is_new(self):
+    def _check_book_is_new(self):
         """ Checks if book has already been added to reading list. """
         read_list = File().read_file()
         for book in read_list["books"]:
@@ -39,7 +39,7 @@ class ReadList:
                 return False
             return True
 
-    def set_read_list(self):
+    def _set_read_list(self):
         """ Adds specified book to reading list. """
         key = self._selected_book - 1
         book = self._books.get_book_dict()[key]
@@ -47,14 +47,14 @@ class ReadList:
 
     def create_list(self):
         """ Creates a reading list. """
-        self._selected_book = self.select_book()
+        self._selected_book = self._select_book()
 
-        if self.check_book_is_new():
-            self.set_read_list()
+        if self._check_book_is_new():
+            self._set_read_list()
         else:
-            self.select_book()
+            self._select_book()
 
-        if self.add_another_book():
+        if self._add_another_book():
             self.create_list()
         else:
             return

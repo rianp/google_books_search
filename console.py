@@ -7,7 +7,7 @@ class Console:
     def prompt_yn(self, string):
         """ Prompts user for a yes/no answer. """
         answer = input(string).lower()
-        if not Validation().validate_bool(answer):
+        if not Validation.validate_bool(answer):
             self.print_string("This is an invalid choice. ")
             Console().prompt_yn(string)
         return answer
@@ -20,7 +20,7 @@ class Console:
     def get_search_term(self):
         """ Gets the search term from the user. """
         search_term = Console().prompt_input("Enter book to be searched: ")
-        if not Validation().validate_string(search_term):
+        if not Validation.validate_string(search_term):
             self.print_string("This is an invalid string. ")
             Console().get_search_term()
         else:

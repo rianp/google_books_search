@@ -20,16 +20,6 @@ class Console:
         return answer
 
     @staticmethod
-    def get_search_term():
-        """ Gets the search term from the user. """
-        search_term = Console.prompt_input("Enter book to be searched: ")
-        if not Validation.validate_string(search_term):
-            Console.print_string("This is an invalid string. ")
-            Console.get_search_term()
-        else:
-            return search_term
-
-    @staticmethod
     def print_book_list(book_dictionary):
         """ Prints book list. """
         for index, book in book_dictionary.items():
@@ -41,11 +31,7 @@ class Console:
         menu_choice = Console.prompt_input(
             "\n++++++++++++++++Main Menu++++++++++++++++\nPress (s) to search books.\n"
             "Press (r) to view reading list.\nPress (x) to exit\n: ")
-        if not Validation.validate_menu_choice(menu_choice):
-            Console.print_string("This is an invalid  menu choice. ")
-            Console.select_menu_option()
-        else:
-            return menu_choice
+        return menu_choice
 
     @staticmethod
     def print_string(string):

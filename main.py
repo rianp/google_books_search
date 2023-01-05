@@ -27,6 +27,10 @@ def load_reading_list():
 def select_from_menu():
 
     menu_choice = Console.select_menu_option()
+    if not Validation.validate_menu_choice(menu_choice):
+        Console.print_string("This is an invalid  menu choice. ")
+        select_from_menu()
+
     if menu_choice == "s":
         search_books()
     if menu_choice == "r":
@@ -43,9 +47,12 @@ def search_books():
         ask_to_add_book_to_reading_list(book_list)
 
 def get_search_results():
-    term = Console.get_search_term()
-    if term:
-        return APIFetch.fetch_books(term)
+    search_term = Console.prompt_input("Enter book to be searched: ")
+    if not Validation.validate_string(search_term):
+        Console.print_string("This is an invalid string. ")
+        search_books()
+    if search_term:
+        return APIFetch.fetch_books(search_term)
 
 def create_book_list(search_results):
     book_list = BookList(search_results)

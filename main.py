@@ -1,39 +1,6 @@
 import json
 import requests
-
-
-class Validation:
-    """ Validates user inputs and search results. """
-
-    def validate_string(self, string):
-        """ Validates user's string. """
-        if string.strip() == "":
-            return False
-        return True
-
-    def validate_bool(self, choice):
-        """ Validates y/n selection. """
-        if choice not in ("y", "n"):
-            return False
-        return True
-
-    def validate_menu_choice(self, choice):
-        """ Validates y/n selection. """
-        if choice not in ("s", "r", "x"):
-            return False
-        return True
-
-    def validate_selection(self, selection, list_length):
-        """ Validates user's book selection. """
-        if selection not in range(1, list_length + 1):
-            return False
-        return True
-
-    def validate_response(self, json_response):
-        """ Validate response returns list of books. """
-        if not json_response["totalItems"]:
-            return False
-        return True
+from validation import *
 
 
 class APIFetch:
@@ -55,43 +22,12 @@ class APIFetch:
         return response.json()
 
 
-class BookSearch:
-    """ Reads and makes searchable Google Book Search API. """
-
-    def __init__(self):
-        self._parsed_books = {}
-
-    def get_search_term(self):
-        """ Gets the search term from the user. """
-        search_term = Console().prompt_input("Enter book to be searched: ")
-        if Validation().validate_string(search_term):
-            self.fetch_books(search_term)
-            return True
-        else:
-            Console().print_string("This is an invalid string. ")
-            return False
-
-    def fetch_books(self, search_term):
-
-        parsed_books = APIFetch().fetch_books(search_term)
-        if Validation().validate_response(parsed_books):
-            self._parsed_books = parsed_books
-            return True
-        else:
-            Console().print_string("There were no matches. ")
-            return False
-
-    def get_parsed_books(self):
-        """ Returns parsed books dictionary. """
-        return self._parsed_books
-
-
 class BookList:
     """ Creates a book list object. """
 
     def __init__(self, search):
         self._book_dict = {}
-        self._parsed_books = search.get_parsed_books()
+        self._parsed_books = search
 
     def create_book_list(self):
         """ Creates book list. """
@@ -99,6 +35,7 @@ class BookList:
         for book in range(list_length):
             book_object = self.create_book_object(book)
             self._book_dict[book] = book_object
+        return self._book_dict
 
     def create_book_object(self, book):
         """ Creates book object. """
@@ -119,11 +56,6 @@ class BookList:
             publisher = item["publisher"]
 
         return Book(book_id, author, title, publisher)
-
-    def print_book_list(self):
-        """ Prints book list. """
-        for index, book in self._book_dict.items():
-            Console().print_string(f"\n----------Book {index + 1}------------\n{book}")
 
     def get_book_dict(self):
         """ Returns book list. """
@@ -277,6 +209,20 @@ class Console:
         answer = input(string).lower()
         return answer
 
+    def get_search_term(self):
+        """ Gets the search term from the user. """
+        search_term = Console().prompt_input("Enter book to be searched: ")
+        if not Validation().validate_string(search_term):
+            self.print_string("This is an invalid string. ")
+            Console().get_search_term()
+        else:
+            return search_term
+
+    def print_book_list(self, book_dictionary):
+        """ Prints book list. """
+        for index, book in book_dictionary.items():
+            self.print_string(f"\n----------Book {index + 1}------------\n{book}")
+
     def print_string(self, string):
         print(string)
 
@@ -307,22 +253,26 @@ def main():
                            "It returns a list of matches you can select from to save to a reading list file. Enjoy!")
 
     while True:
-        search = BookSearch()
-
         menu_choice = Menu().select_menu_option()
 
         if menu_choice == "s":
-            term = search.get_search_term()
+            term = Console().get_search_term()
             if term:
-                book_list = BookList(search)
-                book_list.create_book_list()
-                book_list.print_book_list()
-                books = ReadList(book_list)
-                if book_list.get_book_dict():
-                    answer = Console().prompt_yn(
-                        "Would you like to add a book to your reading list?(y/n): ")
-                    if answer == "y":
-                        books.create_list()
+                response = APIFetch().fetch_books(term)
+                books = Validation().validate_books(response)
+                if not books:
+                    Console().print_string("There were no matches. ")
+                else:
+                    book_list = BookList(books)
+                    book_dictionary = book_list.create_book_list()
+                    Console().print_book_list(book_dictionary)
+
+                    if book_list.get_book_dict():
+                        books = ReadList(book_list)
+                        answer = Console().prompt_yn(
+                            "Would you like to add a book to your reading list?(y/n): ")
+                        if answer == "y":
+                            books.create_list()
 
         if menu_choice == "r":
             File().print_file()

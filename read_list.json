@@ -35,6 +35,15 @@
             "_author": "America's Test Kitchen",
             "_title": "The Perfect Cookie",
             "_publisher": "America's Test Kitchen"
+        },
+        {
+            "_book_id": "UftjvgAACAAJ",
+            "_author": [
+                "Sarah Michelle Gellar",
+                "Gia Russo"
+            ],
+            "_title": "Stirring Up Fun with Food",
+            "_publisher": "Grand Central Life & Style"
         }
     ]
 }

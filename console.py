@@ -36,5 +36,17 @@ class Console:
             Console.print_string(f"\n----------Book {index + 1}------------\n{book}")
 
     @staticmethod
+    def select_menu_option():
+        """ Display menu options and return user's choice. """
+        menu_choice = Console.prompt_input(
+            "\n++++++++++++++++Main Menu++++++++++++++++\nPress (s) to search books.\n"
+            "Press (r) to view reading list.\nPress (x) to exit\n: ")
+        if not Validation.validate_menu_choice(menu_choice):
+            Console.print_string("This is an invalid  menu choice. ")
+            Console.select_menu_option()
+        else:
+            return menu_choice
+
+    @staticmethod
     def print_string(string):
         print(string)

@@ -5,7 +5,6 @@ from book import *
 from read_list import *
 from console import *
 from file import *
-from menu import *
 
 
 def main():
@@ -19,13 +18,13 @@ def main():
                            "It returns a list of matches you can select from to save to a reading list file. Enjoy!")
 
     while True:
-        menu_choice = Menu.select_menu_option()
+        menu_choice = Console.select_menu_option()
 
         if menu_choice == "s":
             term = Console.get_search_term()
             if term:
                 response = APIFetch.fetch_books(term)
-                books = Validation.validate_books(response)
+                books = Validation.validate_response(response)
                 if not books:
                     Console.print_string("There were no matches. ")
                 else:

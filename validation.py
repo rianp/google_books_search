@@ -35,11 +35,3 @@ class Validation:
         if not json_response["totalItems"]:
             return False
         return True
-
-    @staticmethod
-    def validate_books(parsed_books):
-        """ Validates parsed books. """
-        if not Validation.validate_response(parsed_books):
-            return False
-        else:
-            return parsed_books

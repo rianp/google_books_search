@@ -8,7 +8,6 @@ class Validation:
     def validate_string(self, string):
         """ Validates user's string. """
         if string.strip() == "":
-            Console().print_string("This is an invalid string. ")
             return False
         return True
 
@@ -69,6 +68,7 @@ class BookSearch:
             self.fetch_books(search_term)
             return True
         else:
+            Console().print_string("This is an invalid string. ")
             return False
 
     def fetch_books(self, search_term):

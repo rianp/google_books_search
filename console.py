@@ -35,4 +35,5 @@ class Console:
 
     @staticmethod
     def print_string(string):
+        """ Prints string. """
         print(string)

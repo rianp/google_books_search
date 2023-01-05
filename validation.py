@@ -17,7 +17,7 @@ class Validation:
 
     @staticmethod
     def validate_menu_choice(choice):
-        """ Validates y/n selection. """
+        """ Validates menu selection. """
         if choice not in ("s", "r", "x"):
             return False
         return True

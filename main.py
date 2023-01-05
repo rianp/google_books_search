@@ -21,13 +21,14 @@ def main():
     Console.print_string("Okay. Goodbye!")
 
 def load_reading_list():
+    """ Creates reading file if none exists. """
     try:
         File().read_file()
     except:
         File().create_file()
 
 def select_from_menu():
-
+    """ Gets user's menu choice and selects menu choice. """
     menu_choice = Console.select_menu_option()
     if not Validation.validate_menu_choice(menu_choice):
         Console.print_string("This is an invalid  menu choice. ")
@@ -41,6 +42,7 @@ def select_from_menu():
         return False
 
 def search_books():
+    """ Searches books for user's search term. """
     search_results = get_search_results()
     if not Validation.validate_response(search_results):
         Console.print_string("There were no matches. ")
@@ -50,6 +52,7 @@ def search_books():
         ask_to_add_book_to_reading_list(book_list)
 
 def get_search_results():
+    """ Gets user's search term and fetches books from API. """
     search_term = Console.prompt_input("Enter book to be searched: ")
     if not Validation.validate_string(search_term):
         Console.print_string("This is an invalid string. ")
@@ -58,18 +61,21 @@ def get_search_results():
         return APIFetch.fetch_books(search_term)
 
 def create_book_list(search_results):
+    """ Creates list of books matching user's search term. """
     book_list = BookList(search_results)
     book_dictionary = book_list.create_book_list()
     Console.print_book_list(book_dictionary)
     return book_list
 
 def ask_to_add_book_to_reading_list(book_list):
+    """ Asks user if they would like to add a book to their reading list. """
     add_book = Console.prompt_yn(
         "Would you like to add a book to your reading list?(y/n): ")
     if add_book == "y":
         add_to_reading_list(book_list)
 
 def add_to_reading_list(book_list):
+    """ Adds selected book to user's reading list. """
     books = ReadList(book_list)
     books.create_list()
 

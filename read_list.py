@@ -40,7 +40,7 @@ class ReadList:
         return True
 
     def _fetch_selected_book(self):
-        """ Adds specified book to reading list. """
+        """ Takes selected book number and returns selected book. """
         index = self._selected_book_key - 1
         selected_book = self._books.get_book_dict()[index]
         return selected_book

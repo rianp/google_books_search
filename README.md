@@ -35,8 +35,7 @@ doing away with the BookSearch class completely.**
 **An unforeseen result of all the decoupling was a somewhat messy main function due to it now handling all the control 
 flow. After cleaning this up by separating main into different functions, I came across a few bugs stemming from 
 validation. I fixed these by moving the problematic validation calls to ensure that they did not take the program 
-out of the main control loop.. I fixed this by moving some validation calls and methods back into the classes 
-they came from, namely APIFetch and ReadList.**
+out of the main control loop.**
 
 **As a result of following Sam’s suggestions, I have crafted a much more readable and robust program.**
 

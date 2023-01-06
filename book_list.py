@@ -16,6 +16,10 @@ class BookList:
             self._book_dict[book] = book_object
         return self._book_dict
 
+    def get_book_dict(self):
+        """ Returns book list. """
+        return self._book_dict
+
     def _create_book_object(self, book):
         """ Creates book object. """
         item = self._parsed_books["items"][book]["volumeInfo"]
@@ -35,7 +39,3 @@ class BookList:
             publisher = item["publisher"]
 
         return Book(book_id, author, title, publisher)
-
-    def get_book_dict(self):
-        """ Returns book list. """
-        return self._book_dict

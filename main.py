@@ -26,7 +26,7 @@ def select_from_menu():
     """ Gets user's menu choice and selects menu choice. """
     menu_choice = Console.select_menu_option()
     if not Validation.validate_menu_choice(menu_choice):
-        Console.print_string("This is an invalid menu choice. ")
+        Console.print_string("Oops! This is an invalid menu choice. ")
         select_from_menu()
 
     if menu_choice == "s":
@@ -63,7 +63,7 @@ def ask_to_search_again():
         "Would you like to search again?(y/n): ")
 
     if not Validation.validate_bool(search_again):
-        Console.print_string("This is an invalid choice. ")
+        Console.print_string("Sorry! This is an invalid choice. ")
         ask_to_search_again()
 
     if search_again == "y":
@@ -77,7 +77,7 @@ def ask_to_add_book_to_reading_list(book_list, first=True):
         f"Would you like to add {a} book to your reading list?(y/n): ")
 
     if not Validation.validate_bool(add_book):
-            Console.print_string("This is an invalid choice. ")
+            Console.print_string("Sorry! This is an invalid choice. ")
             ask_to_add_book_to_reading_list(book_list)
 
     if add_book == "y":

@@ -13,9 +13,9 @@ class APIFetch:
         self._fetch_books()
 
     def _get_search_term(self):
-        search_term = Console.prompt_input("Enter book to be searched: ")
+        search_term = Console.prompt_input("Please enter book to be searched: ")
         if not Validation.validate_string(search_term):
-            Console.print_string("This is an invalid string. ")
+            Console.print_string("Uhoh! This is an invalid string. ")
             self._get_search_term()
         else:
             self._search_term = search_term

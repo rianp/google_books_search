@@ -8,6 +8,29 @@ then added classes and broke up methods to adhere to the single responsibility p
 Next, I added validation and error handling for various edge cases that I encountered while manually testing. 
 Finally, I added testing.**
 
+**REFACTOR~I started refactoring my program on another branch after pushing it to GitHub for review. There were some things I was eager to adjust, such as:**
+**1. implementing menu functionality**
+**2. adding str() and repr() methods for the Book class**
+**3. implementing a reading list check for already added books**
+**4. exception handling for api timeouts, server errors and saving/opening/reading files.**
+**These adjustments were fun but uneventful puzzles for the most part.**
+
+**The feedback I got from Sam was informative and thoughtful. I am grateful for the book recommendation on Test Driven Development since it is specifically an area I am trying to improve in.** 
+
+**The suggestion on breaking up my BookSearch class was something I had been considering and felt like I needed guidance 
+on making that call. This ended up being one of the more challenging aspects of my refactor. Breaking up BookSearch class 
+revealed a lot of coupling in my code. I ended up going through my program, making each method pure. I then broke up 
+BookSearch into an APIFetch class and BookList class. Eventually I took Sam’s suggestion about making each class its own 
+file. This helped me see how to decouple my code further. All of this resulted in me doing away with the BookSearch 
+class completely.** 
+
+**An unforeseen result of all the decoupling was a somewhat messy main function due to it handling all the control 
+flow. After cleaning this up by separating main into different functions, I came across a few bugs having to do with 
+the validation calls taking the user out of the main loop. I fixed this by moving some validation calls and methods 
+back into the classes they came from, namely APIFetch and ReadList.**
+
+**As a result of following Sam’s suggestions, I have crafted a much more readable and robust program.**
+
 ## Installation
 
 **To use the Google Books Search CLI, you will need to have Python 3 installed 

@@ -1,23 +1,15 @@
-from validation import *
-
-
 class Console:
     """ Displays prompts and receives user input. """
 
     @staticmethod
     def prompt_yn(string):
         """ Prompts user for a yes/no answer. """
-        answer = input(string).lower()
-        if not Validation.validate_bool(answer):
-            Console.print_string("This is an invalid choice. ")
-            Console.prompt_yn(string)
-        return answer
+        return input(string).lower()
 
     @staticmethod
     def prompt_input(string):
         """ Prompts user for a string input. """
-        answer = input(string).lower()
-        return answer
+        return input(string).lower()
 
     @staticmethod
     def print_book_list(book_dictionary):

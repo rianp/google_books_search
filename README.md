@@ -9,10 +9,15 @@ Next, I added validation and error handling for various edge cases that I encoun
 Finally, I added testing.**
 
 **REFACTOR~I started refactoring my program on another branch after pushing it to GitHub for review. There were some things I was eager to adjust, such as:**
+
 **1. implementing menu functionality**
+
 **2. adding str() and repr() methods for the Book class**
+
 **3. implementing a reading list check for already added books**
+
 **4. exception handling for api timeouts, server errors and saving/opening/reading files.**
+
 **These adjustments were fun but uneventful puzzles for the most part.**
 
 **The feedback I got from Sam was informative and thoughtful. I am grateful for the book recommendation on Test Driven Development since it is specifically an area I am trying to improve in.** 
